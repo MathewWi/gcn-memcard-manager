@@ -16,6 +16,7 @@
 // http://code.google.com/p/dolphin-emu/
 #include "GCMemcard.h"
 #include "ColorUtil.h"
+#include "FileUtil.h"
 
 // i think there is support for this stuff in the common lib... if not there should be support
 

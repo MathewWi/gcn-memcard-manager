@@ -19,9 +19,9 @@
 #define __GCMEMCARD_h__
 
 #include "Common.h"
-#include "../../../Core/Src/HW/Sram.h"
+#include /*"../../../Core/Src/HW/*/"Sram.h"
 #include "StringUtil.h"
-#include "../../../Core/Src/HW/EXI_DeviceIPL.h"
+#include "IPLTime.h"//"../../../Core/Src/HW/"EXI_DeviceIPL.h"
 
 #define BE32(x) ((u32((x)[0])<<24) | (u32((x)[1])<<16) | (u32((x)[2])<<8) | u32((x)[3]))
 #define BE16(x) ((u16((x)[0])<<8) | u16((x)[1]))

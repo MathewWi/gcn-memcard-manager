@@ -18,7 +18,7 @@
 #include "MemcardManager.h"
 #include "Common.h"
 #include "wx/mstream.h"
-#include "WxUtils.h"
+//#include "WxUtils.h"
 
 #define DEFAULTS wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator
 #define ARROWS slot ? _T("") : ARROW[slot], slot ? ARROW[slot] : _T("")

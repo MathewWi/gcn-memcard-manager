@@ -42,10 +42,12 @@ bool MCMApp::OnInit()
 	SetTopWindow(main_frame);
 	return true;
 }
-
-u32 CEXIIPL::GetGCTime()
+namespace CEXIIPL
+{
+u32 GetGCTime()
 {
 	const u32 cJanuary2000 = 0x386D42C0;  // Seconds between 1.1.1970 and 1.1.2000
 	u64 ltime = Common::Timer::GetLocalTimeSinceJan1970();
 	return ((u32)ltime - cJanuary2000);
 }
+};
