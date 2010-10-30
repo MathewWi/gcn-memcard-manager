@@ -13,10 +13,10 @@ libs = [
 
 if wxenv['HAVE_WX']:
 	files += [
-		'Src/mcmMain.cpp',
-		'Src/GUI/MCMdebug.cpp',
-		'Src/GUI/MemcardManager.cpp',
-		'Src/MemoryCards/GCMemcard.cpp',
+		'mcmMain.cpp',
+		'GUI/MCMdebug.cpp',
+		'GUI/MemcardManager.cpp',
+		'MemoryCards/GCMemcard.cpp',
 		]
 
 LIBS = libs

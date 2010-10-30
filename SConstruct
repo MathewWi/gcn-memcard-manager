@@ -230,7 +230,7 @@ Export('env')
 
 dirs = [
     basedir + 'Externals/Common_Dolphin@r6316/Src',
-    basedir + 'GCN_Memcard_Manager',
+    basedir + 'GCN_Memcard_Manager/Src',
     ]
 
 #for subdir in dirs:
