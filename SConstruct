@@ -37,16 +37,9 @@ cppDefines = [
 basedir = os.getcwd()+ '/'
 
 include_paths = [
-    basedir + 'Source/Core/Common/Src',
-    basedir + 'Source/PluginSpecs',
-    basedir + 'Source/Core/DolphinWX/Src',
-    basedir + 'Externals/MemcardManager/src',
+    basedir + 'Externals/Common_Dolphin@r6316/Src',
+    basedir + 'GCN_Memcard_Manager/Src',
   ]
-
-dirs = [
-    basedir + 'Source/Core/Common/Src',
-    basedir + '.'
-    ]
 
 builders = {}
 if sys.platform == 'darwin':
@@ -161,11 +154,11 @@ tests = {'CheckWXConfig' : wxconfig.CheckWXConfig,
          }
 
 # Object files
+#VariantDir(env['build_dir'], '.', duplicate=0)
 env['build_dir'] = os.path.join(basedir, 'Build',
     platform.system() + '-' + 'MemCardManager' + os.sep)
 
-conf = env.Configure(custom_tests = tests,
-                     config_h="Source/Core/Common/Src/Config.h")
+conf = env.Configure(config_h="Externals/Common_Dolphin@r6316/Src/Config.h", custom_tests = tests)
 
 if not conf.CheckPKGConfig('0.15.0'):
     print "Can't find pkg-config, some tests will fail"
@@ -216,7 +209,7 @@ elif flavour == 'prof':
     extra = '-prof'
 
 # TODO: support global install
-env['prefix'] = os.path.join(env['base_dir'] + 'Binary',
+env['prefix'] = os.path.join(basedir + 'Binary',
     'MemCardManager' + extra + os.sep)
 # TODO: add bin
 env['binary_dir'] = env['prefix']
@@ -226,23 +219,35 @@ env['local_libs'] =  env['build_dir'] + os.sep + 'libs' + os.sep
 
 env['LIBPATH'].append(env['local_libs'])
 
-# Print a nice progress indication when not compiling
-Progress(['-\r', '\\\r', '|\r', '/\r'], interval = 5)
-
 # Die on unknown variables
 unknown = vars.UnknownVariables()
 if unknown:
     print "Unknown variables:", unknown.keys()
     Exit(1)
 
-# Generate help
-Help(vars.GenerateHelpText(env))
 
 Export('env')
 
+dirs = [
+    basedir + 'Externals/Common_Dolphin@r6316/Src',
+    basedir + 'GCN_Memcard_Manager',
+    ]
+
+#for subdir in dirs:
+#    SConscript(
+#        subdir + os.sep + 'SConscript',
+#        variant_dir = env[ 'build_dir' ] + subdir + os.sep,
+#        duplicate=0
+#        )
+# Now that platform configuration is done, propagate it to modules
 for subdir in dirs:
-    SConscript(
-        subdir + os.sep + 'SConscript',
-        variant_dir = env[ 'build_dir' ] + subdir + os.sep,
-        duplicate=0
-        )
+    SConscript(dirs = subdir, duplicate = 0, exports = 'env',
+        variant_dir = env['build_dir'] + os.sep + subdir)
+    if subdir.startswith('GCN_Memcard_Manager'):
+        env['CPPPATH'] += ['#' + subdir]
+
+# Print a nice progress indication when not compiling
+Progress(['-\r', '\\\r', '|\r', '/\r'], interval = 5)
+
+# Generate help
+Help(vars.GenerateHelpText(env))
