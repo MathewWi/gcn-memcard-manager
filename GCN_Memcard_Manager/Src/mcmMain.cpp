@@ -21,7 +21,7 @@ IMPLEMENT_APP(MCMApp)
 CMemcardManager *main_frame;
 
 #if defined HAVE_WX && HAVE_WX 
-bool wxMsgAlert(const char* caption, const char* text, bool yes_no, int Style) 
+bool wxMsgAlert(const char* caption, const char* text, bool yes_no, int /*Style*/) 
 {
 	return wxYES == wxMessageBox(wxString::FromAscii(text), 
 				 wxString::FromAscii(caption),
