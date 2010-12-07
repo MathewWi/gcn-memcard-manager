@@ -65,6 +65,7 @@ class CMemcardManager : public wxDialog
 		std::string DefaultMemcard[2],
 					DefaultIOPath;
 		IniFile MemcardManagerIni;
+		IniFile::Section* iniMemcardSection;
 #ifdef MCM_DEBUG_FRAME
 		CMemcardManagerDebug * MemcardManagerDebug;
 #endif
@@ -148,6 +149,7 @@ class CMemcardManager : public wxDialog
 		{
 		public:
 			IniFile MemcardManagerIni;
+			IniFile::Section* iniMemcardSection;
 
 			CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style);
 			~CMemcardListCtrl();
