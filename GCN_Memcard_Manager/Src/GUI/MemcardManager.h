@@ -145,19 +145,24 @@ class CMemcardManager : public wxDialog
 		void ChangePath(int id);
 		bool CopyDeleteSwitch(u32 error, int slot);
 
+		struct _mcmSettings
+		{
+			bool twoCardsLoaded,
+				 usePages,
+				 column[NUMBER_OF_COLUMN+1];
+		}mcmSettings;
+
 		class CMemcardListCtrl : public wxListCtrl
 		{
 		public:
 			IniFile MemcardManagerIni;
 			IniFile::Section* iniMemcardSection;
 
-			CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style);
+			CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, _mcmSettings& _mcmSetngs);
 			~CMemcardListCtrl();
-			bool twoCardsLoaded,
-				 usePages,
-				 prevPage,
-				 nextPage,
-				 column[NUMBER_OF_COLUMN+1];
+			_mcmSettings & __mcmSettings;
+			bool prevPage,
+				 nextPage;
 		private:
 			DECLARE_EVENT_TABLE()
 			void OnRightClick(wxMouseEvent& event);	
