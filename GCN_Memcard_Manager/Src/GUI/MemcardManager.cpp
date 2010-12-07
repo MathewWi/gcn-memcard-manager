@@ -106,16 +106,19 @@ CMemcardManager::CMemcardManager(wxWindow* parent, wxWindowID id, const wxString
 {
 	memoryCard[SLOT_A]=NULL;
 	memoryCard[SLOT_B]=NULL;
-	if (MemcardManagerIni.Load(File::GetUserPath(F_DOLPHINCONFIG_IDX)))
+
+	if (!LoadSettings())
 	{
-		iniMemcardSection = MemcardManagerIni.GetOrCreateSection("MemcardManager");
-		iniMemcardSection->Get("Items per page",  &itemsPerPage, 16);
-		iniMemcardSection->Get("DefaultMemcardA", &(DefaultMemcard[SLOT_A]), "");
-		iniMemcardSection->Get("DefaultMemcardB", &(DefaultMemcard[SLOT_B]), "");
-		iniMemcardSection->Get("DefaultIOFolder", &DefaultIOPath, "/Users/GC");
+		itemsPerPage = 16;
+		mcmSettings.usePages = true;
+		for (int i = 0; i < NUMBER_OF_COLUMN; i++)
+		{
+			mcmSettings.column[i] = (i <= COLUMN_FIRSTBLOCK)? true:false;
+		}
 	}
-	else itemsPerPage = 16;
+
 	maxPages = (128 / itemsPerPage) - 1;
+
 #ifdef MCM_DEBUG_FRAME
 	MemcardManagerDebug = NULL;
 #endif
@@ -142,68 +145,66 @@ CMemcardManager::~CMemcardManager()
 		MemcardManagerDebug = NULL;
 	}
 #endif
-
-	MemcardManagerIni.Load(File::GetUserPath(F_DOLPHINCONFIG_IDX));
-	iniMemcardSection = MemcardManagerIni.GetOrCreateSection("MemcardManager");
-	iniMemcardSection->Set("Items per page",  itemsPerPage, 16);
-	iniMemcardSection->Set("DefaultMemcardA", DefaultMemcard[SLOT_A], "");
-	iniMemcardSection->Set("DefaultMemcardB", DefaultMemcard[SLOT_B], "");
-	iniMemcardSection->Set("DefaultIOFolder", DefaultIOPath, "/Users/GC");
-	MemcardManagerIni.Save(File::GetUserPath(F_DOLPHINCONFIG_IDX));
+	if (!SaveSettings())
+		PanicAlert("Failed to save ini settings");
 }
 
-CMemcardManager::CMemcardListCtrl::CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, _mcmSettings& _mcmSetngs)
-	: wxListCtrl(parent, id, pos, size, style),
-	__mcmSettings(_mcmSetngs)
+
+
+bool CMemcardManager::LoadSettings()
 {
 	if (MemcardManagerIni.Load(File::GetUserPath(F_DOLPHINCONFIG_IDX)))
 	{
 		iniMemcardSection = MemcardManagerIni.GetOrCreateSection("MemcardManager");
-		iniMemcardSection->Get("Use Pages", &__mcmSettings.usePages, true);
-		iniMemcardSection->Get("cBanner", &__mcmSettings.column[COLUMN_BANNER], true);
-		iniMemcardSection->Get("cTitle", &__mcmSettings.column[COLUMN_TITLE], true);
-		iniMemcardSection->Get("cComment", &__mcmSettings.column[COLUMN_COMMENT], true);
-		iniMemcardSection->Get("cIcon", &__mcmSettings.column[COLUMN_ICON], true);
-		iniMemcardSection->Get("cBlocks", &__mcmSettings.column[COLUMN_BLOCKS], true);
-		iniMemcardSection->Get("cFirst Block", &__mcmSettings.column[COLUMN_FIRSTBLOCK], true);
+		iniMemcardSection->Get("Items per page",  &itemsPerPage, 16);
+		iniMemcardSection->Get("DefaultMemcardA", &(DefaultMemcard[SLOT_A]), "");
+		iniMemcardSection->Get("DefaultMemcardB", &(DefaultMemcard[SLOT_B]), "");
+		iniMemcardSection->Get("DefaultIOFolder", &DefaultIOPath, "/Users/GC");
+
+		iniMemcardSection->Get("Use Pages", &mcmSettings.usePages, true);
+		iniMemcardSection->Get("cBanner", &mcmSettings.column[COLUMN_BANNER], true);
+		iniMemcardSection->Get("cTitle", &mcmSettings.column[COLUMN_TITLE], true);
+		iniMemcardSection->Get("cComment", &mcmSettings.column[COLUMN_COMMENT], true);
+		iniMemcardSection->Get("cIcon", &mcmSettings.column[COLUMN_ICON], true);
+		iniMemcardSection->Get("cBlocks", &mcmSettings.column[COLUMN_BLOCKS], true);
+		iniMemcardSection->Get("cFirst Block", &mcmSettings.column[COLUMN_FIRSTBLOCK], true);
+
 #ifdef DEBUG_MCM
-		iniMemcardSection->Get("cDebug", &__mcmSettings.column[NUMBER_OF_COLUMN]);
+		iniMemcardSection->Get("cDebug", &mcmSettings.column[NUMBER_OF_COLUMN]);
 #else
-		column[NUMBER_OF_COLUMN] = false;
+		mcmSettings.column[NUMBER_OF_COLUMN] = false;
 #endif
 		for(int i = COLUMN_GAMECODE; i < NUMBER_OF_COLUMN; i++)
 		{
-			__mcmSettings.column[i] = __mcmSettings.column[NUMBER_OF_COLUMN];
+			mcmSettings.column[i] = mcmSettings.column[NUMBER_OF_COLUMN];
 		}
+		return true;
 	}
-	else
-	{
-		__mcmSettings.usePages = true;
-		for (int i = 0; i < NUMBER_OF_COLUMN; i++)
-		{
-			if ( i > COLUMN_FIRSTBLOCK) __mcmSettings.column[i] = false;
-			else	__mcmSettings.column[i] = true;
-		}
-	}
-
+	return false;
 }
 
-CMemcardManager::CMemcardListCtrl::~CMemcardListCtrl()
+bool CMemcardManager::SaveSettings()
 {
 	MemcardManagerIni.Load(File::GetUserPath(F_DOLPHINCONFIG_IDX));
-	
+
 	iniMemcardSection = MemcardManagerIni.GetOrCreateSection("MemcardManager");
-	iniMemcardSection->Set("Use Pages", __mcmSettings.usePages, true);
-	iniMemcardSection->Set("cBanner", __mcmSettings.column[COLUMN_BANNER], true);
-	iniMemcardSection->Set("cTitle", __mcmSettings.column[COLUMN_TITLE], true);
-	iniMemcardSection->Set("cComment", __mcmSettings.column[COLUMN_COMMENT], true);
-	iniMemcardSection->Set("cIcon",	__mcmSettings.column[COLUMN_ICON], true);
-	iniMemcardSection->Set("cBlocks", __mcmSettings.column[COLUMN_BLOCKS], true);
-	iniMemcardSection->Set("cFirst Block", __mcmSettings.column[COLUMN_FIRSTBLOCK], true);
+	iniMemcardSection->Set("Items per page",  itemsPerPage, 16);
+	iniMemcardSection->Set("DefaultMemcardA", DefaultMemcard[SLOT_A], "");
+	iniMemcardSection->Set("DefaultMemcardB", DefaultMemcard[SLOT_B], "");
+
+	iniMemcardSection->Set("Use Pages", mcmSettings.usePages, true);
+	iniMemcardSection->Set("cBanner", mcmSettings.column[COLUMN_BANNER], true);
+	iniMemcardSection->Set("cTitle", mcmSettings.column[COLUMN_TITLE], true);
+	iniMemcardSection->Set("cComment", mcmSettings.column[COLUMN_COMMENT], true);
+	iniMemcardSection->Set("cIcon",	mcmSettings.column[COLUMN_ICON], true);
+	iniMemcardSection->Set("cBlocks", mcmSettings.column[COLUMN_BLOCKS], true);
+	iniMemcardSection->Set("cFirst Block", mcmSettings.column[COLUMN_FIRSTBLOCK], true);
 #ifdef DEBUG_MCM
-	iniMemcardSection->Set("cDebug", __mcmSettings.column[NUMBER_OF_COLUMN],false);
+	iniMemcardSection->Set("cDebug", mcmSettings.column[NUMBER_OF_COLUMN],false);
 #endif
-	MemcardManagerIni.Save(File::GetUserPath(F_DOLPHINCONFIG_IDX));
+
+	return MemcardManagerIni.Save(File::GetUserPath(F_DOLPHINCONFIG_IDX));
+
 }
 
 void CMemcardManager::CreateGUIControls()

@@ -144,6 +144,8 @@ class CMemcardManager : public wxDialog
 		void OnPathChange(wxFileDirPickerEvent& event);
 		void ChangePath(int id);
 		bool CopyDeleteSwitch(u32 error, int slot);
+		bool LoadSettings();
+		bool SaveSettings();
 
 		struct _mcmSettings
 		{
@@ -155,11 +157,9 @@ class CMemcardManager : public wxDialog
 		class CMemcardListCtrl : public wxListCtrl
 		{
 		public:
-			IniFile MemcardManagerIni;
-			IniFile::Section* iniMemcardSection;
-
-			CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, _mcmSettings& _mcmSetngs);
-			~CMemcardListCtrl();
+			CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, _mcmSettings& _mcmSetngs)
+				: wxListCtrl(parent, id, pos, size, style),	__mcmSettings(_mcmSetngs){;}
+			~CMemcardListCtrl(){;}
 			_mcmSettings & __mcmSettings;
 			bool prevPage,
 				 nextPage;
