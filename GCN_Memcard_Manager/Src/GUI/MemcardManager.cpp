@@ -323,7 +323,7 @@ void CMemcardManager::ChangePath(int slot)
 	}
 	else
 	{
-		if (ReloadMemcard(m_MemcardPath[slot]->GetPath().mb_str(), slot))
+		if (m_MemcardPath[slot]->GetPath().length() && ReloadMemcard(m_MemcardPath[slot]->GetPath().mb_str(), slot))
 		{
 			m_MemcardList[slot2]->twoCardsLoaded = true;
 			m_SaveImport[slot]->Enable();
@@ -421,11 +421,14 @@ void CMemcardManager::OnMenuChange(wxCommandEvent& event)
 			m_PrevPage[SLOT_B]->Disable();
 			m_NextPage[SLOT_A]->Disable();
 			m_NextPage[SLOT_B]->Disable();
-			page[SLOT_A] = page[SLOT_B] = FIRSTPAGE;
+			m_MemcardList[SLOT_A]->prevPage =
+			m_MemcardList[SLOT_B]->prevPage = false;
+			page[SLOT_A] =
+			page[SLOT_B] = FIRSTPAGE;
 		}
 		break;
 	case NUMBER_OF_COLUMN:
-		for( int i = COLUMN_GAMECODE; i <= NUMBER_OF_COLUMN; i++)
+		for (int i = COLUMN_GAMECODE; i <= NUMBER_OF_COLUMN; i++)
 		{
 			m_MemcardList[SLOT_A]->column[i] = !m_MemcardList[SLOT_A]->column[i];
 			m_MemcardList[SLOT_B]->column[i] = !m_MemcardList[SLOT_B]->column[i];
@@ -730,9 +733,11 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 			images[i*2+1] = list->Add(icon);
 		}
 	}
-	int pagesMax = 128;
-	if (m_MemcardList[card]->usePages) pagesMax = (page[card] + 1) * itemsPerPage;
-	for (j = page[card] * itemsPerPage;(j < nFiles) && (j < pagesMax); j++)
+
+	int	pagesMax = (m_MemcardList[card]->usePages) ?
+					(page[card] + 1) * itemsPerPage : 128;
+
+	for (j = page[card] * itemsPerPage; (j < nFiles) && (j < pagesMax); j++)
 	{
 		char title[DENTRY_STRLEN];
 		char comment[DENTRY_STRLEN];
@@ -887,8 +892,7 @@ void CMemcardManager::CMemcardListCtrl::OnRightClick(wxMouseEvent& event)
 		popupMenu->Append(ID_SAVEEXPORT_A + slot, wxT("Export Save"));
 		popupMenu->Append(ID_EXPORTALL_A + slot, wxT("Export all saves"));
 				
-		if (!twoCardsLoaded) 
-			popupMenu->FindItem(ID_COPYFROM_A + slot)->Enable(false);
+		popupMenu->FindItem(ID_COPYFROM_A + slot)->Enable(twoCardsLoaded);
 
 		popupMenu->AppendSeparator();
 
@@ -898,12 +902,9 @@ void CMemcardManager::CMemcardListCtrl::OnRightClick(wxMouseEvent& event)
 		popupMenu->Append(ID_MEMCARDPATH_A + slot, wxString::Format(wxT("Set as default Memcard %c"), 'A' + slot));
 		popupMenu->AppendCheckItem(ID_USEPAGES, wxT("Enable pages"));
 	
-		if (!prevPage || !usePages)
-			popupMenu->FindItem(ID_PREVPAGE_A + slot)->Enable(false);
-		if (!nextPage || !usePages)
-			popupMenu->FindItem(ID_NEXTPAGE_A + slot)->Enable(false);
-		if(usePages)
-			popupMenu->FindItem(ID_USEPAGES)->Check();
+		popupMenu->FindItem(ID_PREVPAGE_A + slot)->Enable(prevPage && usePages);
+		popupMenu->FindItem(ID_NEXTPAGE_A + slot)->Enable(nextPage && usePages);
+		popupMenu->FindItem(ID_USEPAGES)->Check(usePages);
 		
 		popupMenu->AppendSeparator();
 
@@ -915,11 +916,11 @@ void CMemcardManager::CMemcardListCtrl::OnRightClick(wxMouseEvent& event)
 
 		for (int i = COLUMN_BANNER; i <= COLUMN_BLOCKS; i++)
 		{
-			if (column[i]) popupMenu->FindItem(i)->Check();
+			popupMenu->FindItem(i)->Check(column[i]);
 		}
 #ifdef DEBUG_MCM
 		popupMenu->AppendCheckItem(NUMBER_OF_COLUMN, wxT("Debug Memcard"));
-		if (column[NUMBER_OF_COLUMN]) popupMenu->FindItem(NUMBER_OF_COLUMN)->Check();
+		popupMenu->FindItem(NUMBER_OF_COLUMN)->Check(column[NUMBER_OF_COLUMN]);
 #endif
 	}
 	PopupMenu(popupMenu);
