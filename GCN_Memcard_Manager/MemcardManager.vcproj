@@ -529,6 +529,10 @@
 			RelativePath=".\Src\MCMmain.h"
 			>
 		</File>
+		<File
+			RelativePath=".\Src\Sram.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
