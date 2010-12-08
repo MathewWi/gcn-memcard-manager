@@ -39,9 +39,10 @@
 #define E_UNK "Unknown error"
 #define FIRSTPAGE 0
 
+#ifdef GCNMCMAPP
+#define MEMCMAN_CONFIG_FILE "./MemcardManager.ini"
+#endif
 #ifdef MEMCMAN
-#undef	CONFIG_FILE
-#define CONFIG_FILE "./MemcardManager.ini"
 #define DEBUG_MCM
 #define MCM_DEBUG_FRAME
 #include "MCMdebug.h"

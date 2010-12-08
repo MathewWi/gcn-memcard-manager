@@ -153,7 +153,11 @@ CMemcardManager::~CMemcardManager()
 
 bool CMemcardManager::LoadSettings()
 {
+#ifdef GCNMCMAPP
+	if (MemcardManagerIni.Load(MEMCMAN_CONFIG_FILE))
+#else
 	if (MemcardManagerIni.Load(File::GetUserPath(F_DOLPHINCONFIG_IDX)))
+#endif
 	{
 		iniMemcardSection = MemcardManagerIni.GetOrCreateSection("MemcardManager");
 		iniMemcardSection->Get("Items per page",  &itemsPerPage, 16);
@@ -185,8 +189,11 @@ bool CMemcardManager::LoadSettings()
 
 bool CMemcardManager::SaveSettings()
 {
+#ifdef GCNMCMAPP
+	MemcardManagerIni.Load(MEMCMAN_CONFIG_FILE);
+#else
 	MemcardManagerIni.Load(File::GetUserPath(F_DOLPHINCONFIG_IDX));
-
+#endif
 	iniMemcardSection = MemcardManagerIni.GetOrCreateSection("MemcardManager");
 	iniMemcardSection->Set("Items per page",  itemsPerPage, 16);
 	iniMemcardSection->Set("DefaultMemcardA", DefaultMemcard[SLOT_A], "");
@@ -203,7 +210,12 @@ bool CMemcardManager::SaveSettings()
 	iniMemcardSection->Set("cDebug", mcmSettings.column[NUMBER_OF_COLUMN],false);
 #endif
 
+#ifdef GCNMCMAPP
+	return MemcardManagerIni.Save(MEMCMAN_CONFIG_FILE);
+#else
 	return MemcardManagerIni.Save(File::GetUserPath(F_DOLPHINCONFIG_IDX));
+#endif
+
 
 }
 
