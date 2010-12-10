@@ -40,11 +40,15 @@ extern const char *netplay_dolphin_ver;
 
 #define STACKALIGN
 
-// A macro to disallow the copy constructor and operator= functions
-// This should be used in the private: declarations for a class
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-	TypeName(const TypeName&); \
-	void operator=(const TypeName&)
+// An inheritable class to disallow the copy constructor and operator= functions
+class NonCopyable
+{
+protected:
+	NonCopyable() {}
+private:
+	NonCopyable(const NonCopyable&);
+	void operator=(const NonCopyable&);
+};
 
 #include "Log.h"
 #include "CommonTypes.h"
@@ -110,8 +114,8 @@ extern const char *netplay_dolphin_ver;
 		//CrtDebugBreak breakAt(614);
 	#endif // end DEBUG/FAST
 
-#else
-//#include "config.h"	// SCons autoconfiguration defines
+#elif defined HAVE_CONFIG_H
+#include "config.h"	// SCons autoconfiguration defines
 #endif
 
 // Windows compatibility
@@ -143,6 +147,10 @@ extern const char *netplay_dolphin_ver;
 
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || defined __APPLE__
 #define _M_SSE 0x301
+#endif
+
+#if _MSC_VER >= 1500 // Visual Studio 2008
+#define _M_SSE 0x401
 #endif
 
 #endif // _COMMON_H_

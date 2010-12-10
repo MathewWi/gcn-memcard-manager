@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Externals\Common_Dolphin@r6316\Common.vcproj", "{C573CAF7-EE6A-458E-8049-16C0BF34C2E9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Externals\Common_Dolphin@r6545\Common.vcproj", "{C573CAF7-EE6A-458E-8049-16C0BF34C2E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxBase28", "Externals\wxWidgets\build\msw\wx_base.vcproj", "{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}"
 EndProject
