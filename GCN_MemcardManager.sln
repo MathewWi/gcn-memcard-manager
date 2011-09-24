@@ -1,12 +1,12 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Externals\Common_Dolphin@r6545\Common.vcproj", "{C573CAF7-EE6A-458E-8049-16C0BF34C2E9}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Externals\Common_Dolphin@r6316\Common.vcproj", "{C573CAF7-EE6A-458E-8049-16C0BF34C2E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxBase28", "Externals\wxWidgets\build\msw\wx_base.vcproj", "{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCore28", "Externals\wxWidgets\build\msw\wx_core.vcproj", "{11F55366-12EC-4C44-A8CB-1D4E315D61ED}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemCardManager", "GCN_Memcard_Manager\MemcardManager.vcproj", "{413653C3-59A4-4E3A-ABB0-56558B323DFE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemcardManager", "GCN_Memcard_Manager\MemcardManager.vcxproj", "{413653C3-59A4-4E3A-ABB0-56558B323DFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

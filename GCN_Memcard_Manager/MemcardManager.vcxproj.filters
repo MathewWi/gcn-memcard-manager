@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Gui">
+      <UniqueIdentifier>{aff229fd-a0c7-4777-9f0b-f32a1c924cb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memcard">
+      <UniqueIdentifier>{b36319a0-984c-4c84-8744-671b18b95663}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\GUI\MCMdebug.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GUI\MemcardManager.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MemoryCards\GCMemcard.cpp">
+      <Filter>Memcard</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\mcmMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\GUI\MCMdebug.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GUI\MemcardManager.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\MemoryCards\GCMemcard.h">
+      <Filter>Memcard</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\IPLTime.h" />
+    <ClInclude Include="Src\MCMmain.h" />
+    <ClInclude Include="Src\Sram.h" />
+  </ItemGroup>
+</Project>
