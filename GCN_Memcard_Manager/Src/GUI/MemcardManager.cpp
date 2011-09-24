@@ -251,7 +251,7 @@ void CMemcardManager::CreateGUIControls()
 		sPages[slot]->Add(m_NextPage[slot], 0, wxEXPAND|wxALL, 1);
 
 		m_MemcardPath[slot] = new wxFilePickerCtrl(this, ID_MEMCARDPATH_A + slot,
-			 wxString::From8BitData(File::GetUserPath(D_GCUSER_IDX)), wxT("Choose a memory card:"),
+			wxString::From8BitData(File::GetUserPath(D_GCUSER_IDX).c_str()), wxT("Choose a memory card:"),
 		wxT("Gamecube Memory Cards (*.raw,*.gcp)|*.raw;*.gcp"), wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
 	
 		m_MemcardList[slot] = new CMemcardListCtrl(this, ID_MEMCARDLIST_A + slot, wxDefaultPosition, wxSize(350,400),
@@ -610,7 +610,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 			{
 				if (!CopyDeleteSwitch(memoryCard[slot]->ExportGci(index, fileName.mb_str(), NULL), -1))
 				{
-					File::Delete(fileName.mb_str());
+					File::Delete(std::string(fileName.mb_str()));
 				}
 			}
 		}

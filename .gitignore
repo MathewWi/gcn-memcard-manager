@@ -1,0 +1,8 @@
+
+Win32/
+ipch/
+*.sdf
+*.suo
+*.vcxproj.user
+GCN_Memcard_Manager/Debug/
+Externals/wxWidgets/build/msw/wx*Win32/
