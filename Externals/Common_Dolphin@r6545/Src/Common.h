@@ -1,5 +1,3 @@
-
-D:\Documents\Desktop\dol\mcm.try2>@git.exe %*
 // Copyright (C) 2003 Dolphin Project.
 
 // This program is free software: you can redistribute it and/or modify
@@ -40,15 +38,11 @@ extern const char *netplay_dolphin_ver;
 
 #define STACKALIGN
 
-// An inheritable class to disallow the copy constructor and operator= functions
-class NonCopyable
-{
-protected:
-	NonCopyable() {}
-private:
-	NonCopyable(const NonCopyable&);
-	void operator=(const NonCopyable&);
-};
+// A macro to disallow the copy constructor and operator= functions
+// This should be used in the private: declarations for a class
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+	TypeName(const TypeName&); \
+	void operator=(const TypeName&)
 
 #include "Log.h"
 #include "CommonTypes.h"
@@ -114,8 +108,8 @@ private:
 		//CrtDebugBreak breakAt(614);
 	#endif // end DEBUG/FAST
 
-#elif defined HAVE_CONFIG_H
-#include "config.h"	// SCons autoconfiguration defines
+#else
+//#include "config.h"	// SCons autoconfiguration defines
 #endif
 
 // Windows compatibility
@@ -147,10 +141,6 @@ private:
 
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || defined __APPLE__
 #define _M_SSE 0x301
-#endif
-
-#if _MSC_VER >= 1500 // Visual Studio 2008
-#define _M_SSE 0x401
 #endif
 
 #endif // _COMMON_H_
