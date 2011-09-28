@@ -33,7 +33,7 @@
 
 #undef MEMCARD_MANAGER_STYLE
 #define MEMCARD_MANAGER_STYLE wxCAPTION | wxSYSTEM_MENU | wxDIALOG_NO_PARENT | wxCLOSE_BOX | wxRESIZE_BORDER | wxMAXIMIZE_BOX
-#define MEMCARDMAN_TITLE "Memory Card Manager WARNING-Make backups before using, should be fixed but could mangle stuff!"
+#define MEMCARDMAN_TITLE _trans("Memory Card Manager WARNING-Make backups before using, should be fixed but could mangle stuff!")
 
 #define E_SAVEFAILED "File write failed"
 #define E_UNK "Unknown error"
@@ -53,7 +53,7 @@ class CMemcardManager : public wxDialog
 {
 	public:
 
-		CMemcardManager(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(MEMCARDMAN_TITLE),
+		CMemcardManager(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString& title = wxGetTranslation(wxT(MEMCARDMAN_TITLE)),
 			const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = MEMCARD_MANAGER_STYLE);
 		virtual ~CMemcardManager();
 
@@ -71,9 +71,6 @@ class CMemcardManager : public wxDialog
 		CMemcardManagerDebug * MemcardManagerDebug;
 #endif
 
-		wxBoxSizer *sMain,
-				   *sButtons,
-				   *sPages[2];
 		wxButton *m_CopyFrom[2],
 				 *m_SaveImport[2],
 				 *m_SaveExport[2],
@@ -82,7 +79,6 @@ class CMemcardManager : public wxDialog
 				 *m_PrevPage[2],
 				 *m_ConvertToGci;
 		wxFilePickerCtrl *m_MemcardPath[2];
-		wxStaticBoxSizer *sMemcard[2];
 		wxStaticText *t_Status[2];
 
 		enum
@@ -150,22 +146,35 @@ class CMemcardManager : public wxDialog
 
 		struct _mcmSettings
 		{
-			bool twoCardsLoaded,
-				 usePages,
-				 column[NUMBER_OF_COLUMN+1];
-		}mcmSettings;
+			bool twoCardsLoaded;
+			bool usePages;
+			bool column[NUMBER_OF_COLUMN + 1];
+		} mcmSettings;
 
 		class CMemcardListCtrl : public wxListCtrl
 		{
+//BEGIN_EVENT_TABLE(CMemcardManager::CMemcardListCtrl, wxListCtrl)
+//      EVT_RIGHT_DOWN(CMemcardManager::CMemcardListCtrl::OnRightClick)
+//END_EVENT_TABLE()
 		public:
-			CMemcardListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, _mcmSettings& _mcmSetngs)
-				: wxListCtrl(parent, id, pos, size, style),	__mcmSettings(_mcmSetngs){;}
-			~CMemcardListCtrl(){;}
+			CMemcardListCtrl(wxWindow* parent, const wxWindowID id,
+				const wxPoint& pos, const wxSize& size,
+				long style, _mcmSettings& _mcmSetngs)
+				: wxListCtrl(parent, id, pos, size, style)
+				, __mcmSettings(_mcmSetngs)
+			{
+				Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(
+					CMemcardListCtrl::OnRightClick));
+			}
+			~CMemcardListCtrl()
+			{
+				Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(
+					CMemcardListCtrl::OnRightClick));
+			}
 			_mcmSettings & __mcmSettings;
 			bool prevPage,
 				 nextPage;
 		private:
-			DECLARE_EVENT_TABLE()
 			void OnRightClick(wxMouseEvent& event);	
 		};
 		
