@@ -51,7 +51,8 @@ u32 GetGCTime()
 	return ((u32)ltime - cJanuary2000);
 }
 };
-SRAM sram_dump= {{
+
+SRAM g_SRAM = {{
 	0x04, 0x6B,
 	0xFB, 0x91,
 	0x00, 0x00, 0x00, 0x00,
