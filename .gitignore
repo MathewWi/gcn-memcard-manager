@@ -16,3 +16,6 @@ GCN_Memcard_Manager/x64/Release/
 *.opensdf
 *.pdb
 *.exe
+*.gci
+*.raw
+*.gcp
