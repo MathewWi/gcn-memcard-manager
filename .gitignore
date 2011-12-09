@@ -6,3 +6,13 @@ ipch/
 *.vcxproj.user
 GCN_Memcard_Manager/Debug/
 Externals/wxWidgets/build/msw/wx*Win32/
+*.obj
+Externals/Dolphin_Common/x64/Release/
+Externals/wxWidgets/build/msw/wxBase28x64/Release/
+Externals/wxWidgets/build/msw/wxCore28x64/Release/
+Externals/zlib/x64/Release/
+GCN_Memcard_Manager/x64/Release/
+*.lib
+*.opensdf
+*.pdb
+*.exe
