@@ -19,3 +19,8 @@ GCN_Memcard_Manager/x64/Release/
 *.gci
 *.raw
 *.gcp
+Externals/Dolphin_Common/x64/
+Externals/wxWidgets/build/msw/wxBase28x64/
+Externals/wxWidgets/build/msw/wxCore28x64/
+Externals/zlib/x64/
+GCN_Memcard_Manager/x64
