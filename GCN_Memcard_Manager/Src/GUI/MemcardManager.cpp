@@ -587,15 +587,16 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 		index = memoryCard[slot]->GetFileIndex(index);
 		if (index != wxNOT_FOUND)
 		{
-			char tempC[10 + DENTRY_STRLEN],
-				 tempC2[DENTRY_STRLEN];
-			memoryCard[slot]->DEntry_GameCode(index,tempC);
-			memoryCard[slot]->DEntry_FileName(index,tempC2);
-			sprintf(tempC, "%s_%s.gci", tempC, tempC2);
+			std::string gciFilename;
+			if (!memoryCard[slot]->GCI_FileName(index, gciFilename))
+			{
+				PanicAlert("invalid index");
+				return;
+			}
 			wxString fileName = wxFileSelector(
 				_("Export save as..."),
 				wxString::From8BitData(DefaultIOPath.c_str()),
-				wxString::From8BitData(tempC), wxT(".gci"),
+				wxString::From8BitData(gciFilename.c_str()), wxT(".gci"),
 				_("Native GCI files(*.gci)") + wxString(wxT("|*.gci|")) +
 				_("MadCatz Gameshark files(*.gcs)") + wxString(wxT("|*.gcs|")) +
 				_("Datel MaxDrive/Pro files(*.sav)") + wxString(wxT("|*.sav")),
@@ -603,7 +604,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 
 			if (fileName.length() > 0)
 			{
-				if (!CopyDeleteSwitch(memoryCard[slot]->ExportGci(index, fileName.mb_str(), NULL), -1))
+				if (!CopyDeleteSwitch(memoryCard[slot]->ExportGci(index, fileName.mb_str(), ""), -1))
 				{
 					File::Delete(std::string(fileName.mb_str()));
 				}
@@ -623,7 +624,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 					"%s\nand have the same name as a file on your memcard\nContinue?", path1.c_str()))
 		for (int i = 0; i < DIRLEN; i++)
 		{
-			CopyDeleteSwitch(memoryCard[slot]->ExportGci(i, ".", &path1), -1);
+			CopyDeleteSwitch(memoryCard[slot]->ExportGci(i, NULL, path1), -1);
 		}
 		break;
 	}
@@ -655,8 +656,7 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 			 wxComment,
 			 wxBlock,
 			 wxFirstBlock,
-			 wxLabel,
-			 tString;
+			 wxLabel;
 
 
 	m_MemcardList[card]->Hide();
@@ -743,8 +743,6 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 
 	for (j = page[card] * itemsPerPage; (j < nFiles) && (j < pagesMax); j++)
 	{
-		char title[DENTRY_STRLEN];
-		char comment[DENTRY_STRLEN];
 		u16 blocks;
 		u16 firstblock;
 		u8 fileIndex = memoryCard[card]->GetFileIndex(j);
@@ -754,8 +752,8 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 
 		m_MemcardList[card]->SetItem(index, COLUMN_BANNER, wxEmptyString);
 
-		if (!memoryCard[card]->DEntry_Comment1(fileIndex, title)) title[0]=0;
-		if (!memoryCard[card]->DEntry_Comment2(fileIndex, comment)) comment[0]=0;
+		std::string title = memoryCard[card]->GetSaveComment1(fileIndex);
+		std::string comment = memoryCard[card]->GetSaveComment2(fileIndex);
 
 		bool ascii = memoryCard[card]->IsAsciiEncoding();
 #ifdef _WIN32
@@ -763,8 +761,8 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 #else
 		wxCSConv SJISConv(wxFontMapper::GetEncodingName(wxFONTENCODING_EUC_JP));
 #endif
-		wxTitle  =  wxString(title, ascii ? *wxConvCurrent : SJISConv);
-		wxComment = wxString(comment, ascii ? *wxConvCurrent : SJISConv);
+		wxTitle  =  wxString(title.c_str(), ascii ? *wxConvCurrent : SJISConv);
+		wxComment = wxString(comment.c_str(), ascii ? *wxConvCurrent : SJISConv);
 
 		m_MemcardList[card]->SetItem(index, COLUMN_TITLE, wxTitle);
 		m_MemcardList[card]->SetItem(index, COLUMN_COMMENT, wxComment);
@@ -785,44 +783,18 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 			m_MemcardList[card]->SetItemColumnImage(index, COLUMN_ICON, images[j*2+1]);
 		}
 #ifdef DEBUG_MCM
-		char gC[5];
-		if (!memoryCard[card]->DEntry_GameCode(fileIndex, gC)) gC[0]=0;
-		m_MemcardList[card]->SetItem(index, COLUMN_GAMECODE, wxString::FromAscii(gC));
+		m_MemcardList[card]->SetItem(index, COLUMN_GAMECODE, wxString::FromAscii(memoryCard[card]->DEntry_GameCode(fileIndex).c_str()));
+		m_MemcardList[card]->SetItem(index, COLUMN_MAKERCODE, wxString::FromAscii(memoryCard[card]->DEntry_Makercode(fileIndex).c_str()));
+		m_MemcardList[card]->SetItem(index, COLUMN_BIFLAGS, wxString::FromAscii(memoryCard[card]->DEntry_BIFlags(fileIndex).c_str()));
+		m_MemcardList[card]->SetItem(index, COLUMN_FILENAME, wxString::FromAscii(memoryCard[card]->DEntry_FileName(fileIndex).c_str()));
+		m_MemcardList[card]->SetItem(index, COLUMN_MODTIME, wxString::Format(wxT("%04X"), memoryCard[card]->DEntry_ModTime(fileIndex)));
+		m_MemcardList[card]->SetItem(index, COLUMN_IMAGEADD, wxString::Format(wxT("%04X"), memoryCard[card]->DEntry_ImageOffset(fileIndex)));
+		m_MemcardList[card]->SetItem(index, COLUMN_ICONFMT, wxString::FromAscii(memoryCard[card]->DEntry_IconFmt(fileIndex).c_str()));
+		m_MemcardList[card]->SetItem(index, COLUMN_ANIMSPEED, wxString::Format(wxT("%02X"), memoryCard[card]->DEntry_AnimSpeed(fileIndex)));
+		m_MemcardList[card]->SetItem(index, COLUMN_PERMISSIONS, wxString::FromAscii(memoryCard[card]->DEntry_Permissions(fileIndex).c_str()));
+		m_MemcardList[card]->SetItem(index, COLUMN_COPYCOUNTER, wxString::Format(wxT("%0X"), memoryCard[card]->DEntry_CopyCounter(fileIndex)));
+		m_MemcardList[card]->SetItem(index, COLUMN_COMMENTSADDRESS, wxString::Format(wxT("%04X"), memoryCard[card]->DEntry_CommentsAddress(fileIndex)));
 
-		char mC[3];
-		if (!memoryCard[card]->DEntry_Markercode(fileIndex, mC)) mC[0]=0;
-		m_MemcardList[card]->SetItem(index, COLUMN_MAKERCODE, wxString::FromAscii(mC));
-
-		char bI[9];
-		if (!memoryCard[card]->DEntry_BIFlags(fileIndex, bI)) bI[0]=0;
-		m_MemcardList[card]->SetItem(index, COLUMN_BIFLAGS, wxString::FromAscii(bI));
-
-		char fN[32];
-		if (!memoryCard[card]->DEntry_FileName(fileIndex, fN)) fN[0]=0;
-		m_MemcardList[card]->SetItem(index, COLUMN_FILENAME, wxString::FromAscii(fN));
-
-		tString.Printf(wxT("%04X"), memoryCard[card]->DEntry_ModTime(fileIndex));
-		m_MemcardList[card]->SetItem(index, COLUMN_MODTIME, tString);
-
-		tString.Printf(wxT("%04X"), memoryCard[card]->DEntry_ImageOffset(fileIndex));
-		m_MemcardList[card]->SetItem(index, COLUMN_IMAGEADD, tString);
-
-		char iF[17];
-		if (!memoryCard[card]->DEntry_IconFmt(fileIndex, iF)) iF[0]=0;
-		m_MemcardList[card]->SetItem(index, COLUMN_ICONFMT, wxString::FromAscii(iF));
-
-		tString.Printf(wxT("%02X"), memoryCard[card]->DEntry_AnimSpeed(fileIndex));
-		m_MemcardList[card]->SetItem(index, COLUMN_ANIMSPEED, tString);
-
-		char per[40];
-		if (!memoryCard[card]->DEntry_Permissions(fileIndex, per)) per[0]=0;
-		m_MemcardList[card]->SetItem(index, COLUMN_PERMISSIONS, wxString::FromAscii(per));
-
-		tString.Printf(wxT("%0X"), memoryCard[card]->DEntry_CopyCounter(fileIndex));
-		m_MemcardList[card]->SetItem(index, COLUMN_COPYCOUNTER, tString);
-
-		tString.Printf(wxT("%04X"), memoryCard[card]->DEntry_CommentsAddress(fileIndex));
-		m_MemcardList[card]->SetItem(index, COLUMN_COMMENTSADDRESS, tString);
 #endif
 	}
 
