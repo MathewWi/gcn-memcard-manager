@@ -22,8 +22,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
-		DebugFast|Win32 = DebugFast|Win32
-		DebugFast|x64 = DebugFast|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -32,9 +30,6 @@ Global
 		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.Debug|Win32.Build.0 = Debug|Win32
 		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.Debug|x64.ActiveCfg = Debug|x64
 		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.Debug|x64.Build.0 = Debug|x64
-		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.DebugFast|Win32.ActiveCfg = Debug|x64
-		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.DebugFast|x64.ActiveCfg = Debug|x64
-		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.DebugFast|x64.Build.0 = Debug|x64
 		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.Release|Win32.ActiveCfg = Release|Win32
 		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.Release|Win32.Build.0 = Release|Win32
 		{413653C3-59A4-4E3A-ABB0-56558B323DFE}.Release|x64.ActiveCfg = Release|x64
@@ -43,10 +38,6 @@ Global
 		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.Debug|Win32.Build.0 = Release|Win32
 		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.Debug|x64.ActiveCfg = Debug|x64
 		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.Debug|x64.Build.0 = Debug|x64
-		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.DebugFast|Win32.ActiveCfg = DebugFast|Win32
-		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.DebugFast|Win32.Build.0 = DebugFast|Win32
-		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.DebugFast|x64.ActiveCfg = DebugFast|x64
-		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.DebugFast|x64.Build.0 = DebugFast|x64
 		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.Release|Win32.ActiveCfg = Release|Win32
 		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.Release|Win32.Build.0 = Release|Win32
 		{1C8436C9-DBAF-42BE-83BC-CF3EC9175ABE}.Release|x64.ActiveCfg = Release|x64
@@ -55,10 +46,6 @@ Global
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.Debug|Win32.Build.0 = Release|Win32
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.Debug|x64.ActiveCfg = Debug|x64
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.Debug|x64.Build.0 = Debug|x64
-		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.DebugFast|Win32.ActiveCfg = DebugFast|Win32
-		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.DebugFast|Win32.Build.0 = DebugFast|Win32
-		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.DebugFast|x64.ActiveCfg = DebugFast|x64
-		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.DebugFast|x64.Build.0 = DebugFast|x64
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.Release|Win32.ActiveCfg = Release|Win32
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.Release|Win32.Build.0 = Release|Win32
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED}.Release|x64.ActiveCfg = Release|x64
@@ -67,10 +54,6 @@ Global
 		{3E1339F5-9311-4122-9442-369702E8FCAD}.Debug|Win32.Build.0 = Debug|Win32
 		{3E1339F5-9311-4122-9442-369702E8FCAD}.Debug|x64.ActiveCfg = Debug|x64
 		{3E1339F5-9311-4122-9442-369702E8FCAD}.Debug|x64.Build.0 = Debug|x64
-		{3E1339F5-9311-4122-9442-369702E8FCAD}.DebugFast|Win32.ActiveCfg = DebugFast|Win32
-		{3E1339F5-9311-4122-9442-369702E8FCAD}.DebugFast|Win32.Build.0 = DebugFast|Win32
-		{3E1339F5-9311-4122-9442-369702E8FCAD}.DebugFast|x64.ActiveCfg = DebugFast|x64
-		{3E1339F5-9311-4122-9442-369702E8FCAD}.DebugFast|x64.Build.0 = DebugFast|x64
 		{3E1339F5-9311-4122-9442-369702E8FCAD}.Release|Win32.ActiveCfg = Release|Win32
 		{3E1339F5-9311-4122-9442-369702E8FCAD}.Release|Win32.Build.0 = Release|Win32
 		{3E1339F5-9311-4122-9442-369702E8FCAD}.Release|x64.ActiveCfg = Release|x64
@@ -79,10 +62,6 @@ Global
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.Debug|Win32.Build.0 = Debug|Win32
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.Debug|x64.ActiveCfg = Debug|x64
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.Debug|x64.Build.0 = Debug|x64
-		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.DebugFast|Win32.ActiveCfg = DebugFast|Win32
-		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.DebugFast|Win32.Build.0 = DebugFast|Win32
-		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.DebugFast|x64.ActiveCfg = DebugFast|x64
-		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.DebugFast|x64.Build.0 = DebugFast|x64
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.Release|Win32.ActiveCfg = Release|Win32
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.Release|Win32.Build.0 = Release|Win32
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534}.Release|x64.ActiveCfg = Release|x64
