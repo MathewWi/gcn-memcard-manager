@@ -100,43 +100,7 @@
     <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_DebugFast.props" />
     <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
-    <OutDir>$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">
-    <OutDir>$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">
-    <IntDir>$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">
-    <IntDir>$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
+  <PropertyGroup Label="UserMacros" />  
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>.\Src;..\..\..\Externals/CLRun/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

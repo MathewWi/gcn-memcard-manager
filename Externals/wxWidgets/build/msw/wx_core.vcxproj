@@ -103,21 +103,6 @@
     <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_Debug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>__WXDEBUG__;wxUSE_BASE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
