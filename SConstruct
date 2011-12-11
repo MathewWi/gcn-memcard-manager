@@ -37,7 +37,7 @@ cppDefines = [
 basedir = os.getcwd()+ '/'
 
 include_paths = [
-    basedir + 'Externals/Common_Dolphin@r6545/Src',
+    basedir + 'Externals/Dolphin_Common/Src',
     basedir + 'GCN_Memcard_Manager/Src',
   ]
 
@@ -158,7 +158,7 @@ tests = {'CheckWXConfig' : wxconfig.CheckWXConfig,
 env['build_dir'] = os.path.join(basedir, 'Build',
     platform.system() + '-' + 'MemCardManager' + os.sep)
 
-conf = env.Configure(config_h="Externals/Common_Dolphin@r6545/Src/Config.h", custom_tests = tests)
+conf = env.Configure(config_h="Externals/Dolphin_Common/Src/Config.h", custom_tests = tests)
 
 if not conf.CheckPKGConfig('0.15.0'):
     print "Can't find pkg-config, some tests will fail"
@@ -229,7 +229,7 @@ if unknown:
 Export('env')
 
 dirs = [
-    basedir + 'Externals/Common_Dolphin@r6545/Src',
+    basedir + 'Externals/Dolphin_Common',
     basedir + 'GCN_Memcard_Manager/Src',
     ]
 
