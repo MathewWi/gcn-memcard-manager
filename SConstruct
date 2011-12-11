@@ -5,7 +5,7 @@ import sys
 import platform
 
 # Home made tests
-sys.path.append('SconsTests')
+sys.path.append('Externals/SconsTests')
 import wxconfig
 import utils
 

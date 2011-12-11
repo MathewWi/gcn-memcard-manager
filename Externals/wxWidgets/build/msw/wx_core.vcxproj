@@ -62,49 +62,61 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\Source\VSProps\Base.props" />
-    <Import Project="..\..\..\..\Source\VSProps\CodeGen_Release.props" />
-    <Import Project="..\..\..\..\Source\VSProps\PrecompiledHeader.props" />
-    <Import Project="..\..\..\..\Source\VSProps\WXWOverrides.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\Base.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_Release.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\WXWOverrides.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\Source\VSProps\Base.props" />
-    <Import Project="..\..\..\..\Source\VSProps\CodeGen_DebugFast.props" />
-    <Import Project="..\..\..\..\Source\VSProps\PrecompiledHeader.props" />
-    <Import Project="..\..\..\..\Source\VSProps\WXWOverrides.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\Base.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_DebugFast.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\WXWOverrides.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\Source\VSProps\Base.props" />
-    <Import Project="..\..\..\..\Source\VSProps\PrecompiledHeader.props" />
-    <Import Project="..\..\..\..\Source\VSProps\WXWOverrides.props" />
-    <Import Project="..\..\..\..\Source\VSProps\CodeGen_Debug.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\Base.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\WXWOverrides.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_Debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\Source\VSProps\Base.props" />
-    <Import Project="..\..\..\..\Source\VSProps\CodeGen_Release.props" />
-    <Import Project="..\..\..\..\Source\VSProps\PrecompiledHeader.props" />
-    <Import Project="..\..\..\..\Source\VSProps\WXWOverrides.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\Base.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_Release.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\WXWOverrides.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\Source\VSProps\Base.props" />
-    <Import Project="..\..\..\..\Source\VSProps\CodeGen_DebugFast.props" />
-    <Import Project="..\..\..\..\Source\VSProps\PrecompiledHeader.props" />
-    <Import Project="..\..\..\..\Source\VSProps\WXWOverrides.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\Base.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_DebugFast.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\WXWOverrides.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\Source\VSProps\Base.props" />
-    <Import Project="..\..\..\..\Source\VSProps\PrecompiledHeader.props" />
-    <Import Project="..\..\..\..\Source\VSProps\WXWOverrides.props" />
-    <Import Project="..\..\..\..\Source\VSProps\CodeGen_Debug.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\Base.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\PrecompiledHeader.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\WXWOverrides.props" />
+    <Import Project="$(SolutionDir)\Externals\VSProps\CodeGen_Debug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">$(SolutionDir)/Build/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugFast|x64'">$(SolutionDir)/Build/$(ProjectName)/$(Platform)/$(Configuration)/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

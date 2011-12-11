@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemcardManager", "GCN_Memcard_Manager\MemcardManager.vcxproj", "{413653C3-59A4-4E3A-ABB0-56558B323DFE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemorycardManager", "GCN_Memcard_Manager\MemcardManager.vcxproj", "{413653C3-59A4-4E3A-ABB0-56558B323DFE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{11F55366-12EC-4C44-A8CB-1D4E315D61ED} = {11F55366-12EC-4C44-A8CB-1D4E315D61ED}
 		{C87A4178-44F6-49B2-B7AA-C79AF1B8C534} = {C87A4178-44F6-49B2-B7AA-C79AF1B8C534}
