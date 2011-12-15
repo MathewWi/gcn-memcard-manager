@@ -1,6 +1,6 @@
 #Output files
-Build/
-Binary/
+[Bb]uild/
+[Bb]inary/
 #VisualStudio Files
 *.sdf
 *.suo
