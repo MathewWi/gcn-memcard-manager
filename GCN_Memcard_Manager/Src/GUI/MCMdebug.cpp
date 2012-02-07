@@ -194,14 +194,14 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 	wx_Encoding.Printf(	wxT("%02X, %02X"),
 		memoryCard[card]->hdr.Encoding[0],memoryCard[card]->hdr.Encoding[1]);
 	
-	wx_UpdateCounter.Printf(wxT("%02X, %02X"),
-		memoryCard[card]->hdr.UpdateCounter[0],memoryCard[card]->hdr.UpdateCounter[1]);
+	wx_UpdateCounter.Printf(wxT("%04X"),
+		BE16(memoryCard[card]->hdr.UpdateCounter));
 
 	wx_CheckSum1.Printf(wxT("%04X"),
-		Common::swap16(memoryCard[card]->hdr.Checksum));
+		BE16(memoryCard[card]->hdr.Checksum));
 
 	wx_CheckSum2.Printf(wxT("%04X"),
-		Common::swap16(memoryCard[card]->hdr.Checksum_Inv));
+		BE16(memoryCard[card]->hdr.Checksum_Inv));
 
 
 	t_HDR_ser[card]->SetLabel(wx_ser);
@@ -267,14 +267,14 @@ void CMemcardManagerDebug::updateDIRtab(int card)
 			 wx_CheckSum1,
 			 wx_CheckSum2;
 	
-	wx_UpdateCounter.Printf(wxT("%02X, %02X"),
-		memoryCard[card]->dir.UpdateCounter[0],memoryCard[card]->dir.UpdateCounter[1]);
+	wx_UpdateCounter.Printf(wxT("%04X"),
+		BE16(memoryCard[card]->dir.UpdateCounter));
 	
 	wx_CheckSum1.Printf(wxT("%04X"),
-		Common::swap16(memoryCard[card]->dir.Checksum));
+		BE16(memoryCard[card]->dir.Checksum));
 	
 	wx_CheckSum2.Printf(wxT("%04X"),
-		Common::swap16(memoryCard[card]->dir.Checksum_Inv));
+		BE16(memoryCard[card]->dir.Checksum_Inv));
 
 	t_DIR_UpdateCounter[card]->SetLabel(wx_UpdateCounter);
 	t_DIR_CheckSum1[card]->SetLabel(wx_CheckSum1);
@@ -327,12 +327,12 @@ void CMemcardManagerDebug::updateDIRBtab(int card)
 			 wx_CheckSum1,
 			 wx_CheckSum2;
 
-	wx_UpdateCounter.Printf(wxT("%02X, %02X"),
-		memoryCard[card]->dir_backup.UpdateCounter[0],memoryCard[card]->dir_backup.UpdateCounter[1]);
+	wx_UpdateCounter.Printf(wxT("%04X"),
+		BE16(memoryCard[card]->dir_backup.UpdateCounter));
 	wx_CheckSum1.Printf(wxT("%04X"),
-		Common::swap16(memoryCard[card]->dir_backup.Checksum));
+		BE16(memoryCard[card]->dir_backup.Checksum));
 	wx_CheckSum2.Printf(wxT("%04X"),
-		Common::swap16(memoryCard[card]->dir_backup.Checksum_Inv));
+		BE16(memoryCard[card]->dir_backup.Checksum_Inv));
 
 	t_DIR_b_UpdateCounter[card]->SetLabel(wx_UpdateCounter);
 	t_DIR_b_CheckSum1[card]->SetLabel(wx_CheckSum1);
@@ -421,7 +421,7 @@ void CMemcardManagerDebug::updateBATtab(int card)
 		Common::swap16(memoryCard[card]->bat.Checksum));
 	wx_CheckSum2.Printf(wxT("%04X"),
 		Common::swap16(memoryCard[card]->bat.Checksum_Inv));
-	wx_UpdateCounter.Printf(wxT("%02X, %02X"), memoryCard[card]->bat.UpdateCounter[0],memoryCard[card]->bat.UpdateCounter[1]);
+	wx_UpdateCounter.Printf(wxT("%04X"), BE16(memoryCard[card]->bat.UpdateCounter));
 	wx_FreeBlocks.Printf(wxT("%02X, %02X"), memoryCard[card]->bat.FreeBlocks[0],memoryCard[card]->bat.FreeBlocks[1]);
 	wx_LastAllocated.Printf(wxT("%d"), memoryCard[card]->bat.LastAllocated[0] << 8 | memoryCard[card]->bat.LastAllocated[1]);
 
@@ -511,7 +511,7 @@ void CMemcardManagerDebug::updateBATBtab(int card)
 		Common::swap16(memoryCard[card]->bat_backup.Checksum));
 	wx_CheckSum2.Printf(wxT("%04X"),
 		Common::swap16(memoryCard[card]->bat_backup.Checksum_Inv));
-	wx_UpdateCounter.Printf(wxT("%02X, %02X"), memoryCard[card]->bat_backup.UpdateCounter[0],memoryCard[card]->bat_backup.UpdateCounter[1]);
+	wx_UpdateCounter.Printf(wxT("%04X"), BE16(memoryCard[card]->bat_backup.UpdateCounter));
 	wx_FreeBlocks.Printf(wxT("%02X, %02X"), memoryCard[card]->bat_backup.FreeBlocks[0],memoryCard[card]->bat_backup.FreeBlocks[1]);
 	wx_LastAllocated.Printf(wxT("%02X, %02X"), memoryCard[card]->bat_backup.LastAllocated[0],memoryCard[card]->bat_backup.LastAllocated[1]);
 
