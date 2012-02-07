@@ -173,13 +173,11 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 	wx_fmtTime.Printf(wxT("%016llX"), 
 		Common::swap64(memoryCard[card]->hdr.formatTime));
 	
-	wx_SRAMBIAS.Printf(wxT("%02X, %02X, %02X, %02X"),
-		memoryCard[card]->hdr.SramBias[0],memoryCard[card]->hdr.SramBias[1],
-		memoryCard[card]->hdr.SramBias[2],memoryCard[card]->hdr.SramBias[3]);
+	wx_SRAMBIAS.Printf(wxT("%08X"),
+		BE32(memoryCard[card]->hdr.SramBias));
 	
-	wx_SRAMLANG.Printf(wxT("%02X, %02X, %02X, %02X"),
-		memoryCard[card]->hdr.SramLang[0], memoryCard[card]->hdr.SramLang[1],
-		memoryCard[card]->hdr.SramLang[2],memoryCard[card]->hdr.SramLang[3]);
+	wx_SRAMLANG.Printf(wxT("%08X"),
+		BE32(memoryCard[card]->hdr.SramLang));
 
 	wx_Unk2.Printf(wxT("%02X, %02X, %02X, %02X"),
 		memoryCard[card]->hdr.Unk2[0],memoryCard[card]->hdr.Unk2[1],
@@ -422,8 +420,8 @@ void CMemcardManagerDebug::updateBATtab(int card)
 	wx_CheckSum2.Printf(wxT("%04X"),
 		Common::swap16(memoryCard[card]->bat.Checksum_Inv));
 	wx_UpdateCounter.Printf(wxT("%04X"), BE16(memoryCard[card]->bat.UpdateCounter));
-	wx_FreeBlocks.Printf(wxT("%02X, %02X"), memoryCard[card]->bat.FreeBlocks[0],memoryCard[card]->bat.FreeBlocks[1]);
-	wx_LastAllocated.Printf(wxT("%d"), memoryCard[card]->bat.LastAllocated[0] << 8 | memoryCard[card]->bat.LastAllocated[1]);
+	wx_FreeBlocks.Printf(wxT("%04X"), BE16(memoryCard[card]->bat.FreeBlocks));
+	wx_LastAllocated.Printf(wxT("%04x"), BE16(memoryCard[card]->bat.LastAllocated));
 
 	t_BAT_CheckSum1[card]->SetLabel(wx_CheckSum1);
 	t_BAT_CheckSum2[card]->SetLabel(wx_CheckSum2);
@@ -512,8 +510,8 @@ void CMemcardManagerDebug::updateBATBtab(int card)
 	wx_CheckSum2.Printf(wxT("%04X"),
 		Common::swap16(memoryCard[card]->bat_backup.Checksum_Inv));
 	wx_UpdateCounter.Printf(wxT("%04X"), BE16(memoryCard[card]->bat_backup.UpdateCounter));
-	wx_FreeBlocks.Printf(wxT("%02X, %02X"), memoryCard[card]->bat_backup.FreeBlocks[0],memoryCard[card]->bat_backup.FreeBlocks[1]);
-	wx_LastAllocated.Printf(wxT("%02X, %02X"), memoryCard[card]->bat_backup.LastAllocated[0],memoryCard[card]->bat_backup.LastAllocated[1]);
+	wx_FreeBlocks.Printf(wxT("%04X"), BE16(memoryCard[card]->bat_backup.FreeBlocks));
+	wx_LastAllocated.Printf(wxT("%04X"), BE16(memoryCard[card]->bat_backup.LastAllocated));
 
 	t_BAT_b_CheckSum1[card]->SetLabel(wx_CheckSum1);
 	t_BAT_b_CheckSum2[card]->SetLabel(wx_CheckSum2);
