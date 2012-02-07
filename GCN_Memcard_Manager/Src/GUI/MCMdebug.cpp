@@ -162,16 +162,11 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 			 wx_CheckSum1,
 			 wx_CheckSum2;
 	
-	wx_ser.Printf(wxT("%02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X"),
-		memoryCard[card]->hdr.serial[0],memoryCard[card]->hdr.serial[1],
-		memoryCard[card]->hdr.serial[2],memoryCard[card]->hdr.serial[3],
-		memoryCard[card]->hdr.serial[4],memoryCard[card]->hdr.serial[5],
-		memoryCard[card]->hdr.serial[6],memoryCard[card]->hdr.serial[7],
-		memoryCard[card]->hdr.serial[8],memoryCard[card]->hdr.serial[9],
-		memoryCard[card]->hdr.serial[10],memoryCard[card]->hdr.serial[11]);
+	wx_ser.Printf(wxT("%08X%016llX"),
+		BE32(memoryCard[card]->hdr.serial), BE64(memoryCard[card]->hdr.serial+4));
 
 	wx_fmtTime.Printf(wxT("%016llX"), 
-		Common::swap64(memoryCard[card]->hdr.formatTime));
+		BE64(memoryCard[card]->hdr.formatTime));
 	
 	wx_SRAMBIAS.Printf(wxT("%08X"),
 		BE32(memoryCard[card]->hdr.SramBias));
@@ -179,18 +174,17 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 	wx_SRAMLANG.Printf(wxT("%08X"),
 		BE32(memoryCard[card]->hdr.SramLang));
 
-	wx_Unk2.Printf(wxT("%02X, %02X, %02X, %02X"),
-		memoryCard[card]->hdr.Unk2[0],memoryCard[card]->hdr.Unk2[1],
-		memoryCard[card]->hdr.Unk2[2],memoryCard[card]->hdr.Unk2[3]);			
+	wx_Unk2.Printf(wxT("%08X"),
+		BE32(memoryCard[card]->hdr.Unk2));			
 
-	wx_devID.Printf(wxT("%02X, %02X"),
-		memoryCard[card]->hdr.deviceID[0],memoryCard[card]->hdr.deviceID[1]);
+	wx_devID.Printf(wxT("%04X"),
+		BE16(memoryCard[card]->hdr.deviceID));
 
-	wx_Size.Printf(wxT("%02X, %02X"),
-		memoryCard[card]->hdr.SizeMb[0],memoryCard[card]->hdr.SizeMb[1]);
+	wx_Size.Printf(wxT("%04X"),
+		BE16(memoryCard[card]->hdr.SizeMb));
 
-	wx_Encoding.Printf(	wxT("%02X, %02X"),
-		memoryCard[card]->hdr.Encoding[0],memoryCard[card]->hdr.Encoding[1]);
+	wx_Encoding.Printf(	wxT("%04x"),
+		BE16(memoryCard[card]->hdr.Encoding));
 	
 	wx_UpdateCounter.Printf(wxT("%04X"),
 		BE16(memoryCard[card]->hdr.UpdateCounter));
