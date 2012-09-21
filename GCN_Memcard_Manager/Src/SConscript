@@ -7,9 +7,6 @@ wxenv = env.Clone()
 files = [
 	]
 
-libs = [
-	'common',
-	]
 
 if wxenv['HAVE_WX']:
 	files += [
@@ -19,11 +16,6 @@ if wxenv['HAVE_WX']:
 		'MemoryCards/GCMemcard.cpp',
 		]
 
-LIBS = libs
-
-wxenv.Append(
-	LIBS = libs
-	)
 
 exeGUI = env['binary_dir'] + 'MemcardManager'
 
