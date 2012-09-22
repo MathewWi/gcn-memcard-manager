@@ -64,6 +64,7 @@ void decodeCI8image(u32* dst, u8* src, u16* pal, int width, int height)
 
 GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 	: m_valid(false)
+	, mci_offset(0)
 	, m_fileName(filename)
 { 
 	File::IOFile mcdFile(m_fileName, "r+b");
@@ -81,12 +82,16 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 		//This function can be removed once more about hdr is known and we can check for a valid header
 		std::string fileType;
 		SplitPath(filename, NULL, NULL, &fileType);
-		if (strcasecmp(fileType.c_str(), ".raw") && strcasecmp(fileType.c_str(), ".gcp"))
+		if (!strcasecmp(fileType.c_str(), ".mci"))
+		{
+			mci_offset = 0x40;
+		}
+		else if (strcasecmp(fileType.c_str(), ".raw") && strcasecmp(fileType.c_str(), ".gcp"))
 		{
 			PanicAlertT("File has the extension \"%s\"\nvalid extensions are (.raw/.gcp)", fileType.c_str());
 			return;
 		}
-		u32 size = mcdFile.GetSize();
+		u32 size = mcdFile.GetSize() - mci_offset;
 		if (size < MC_FST_BLOCKS*BLOCK_SIZE)
 		{
 			PanicAlertT("%s failed to load as a memorycard \nfile is not large enough to be a valid memory card file (0x%x bytes)", filename, size);
@@ -112,10 +117,23 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 				PanicAlertT("%s failed to load as a memorycard \n Card size is invalid (0x%x bytes)", filename, size);
 				return;
 		}
+		if  (mci_offset)
+		{
+
+			mcdFile.Seek(0, SEEK_SET);
+			mcdFile.ReadBytes(&mci_hdr, 0x40);
+			if (!ValidMCIHeader())
+			{
+				PanicAlertT("%s failed to load as a mci memory card image\n File has an invalid mci header", filename);
+				return;
+			}
+			
+		}
 	}
 	
 	
-	mcdFile.Seek(0, SEEK_SET);
+
+	mcdFile.Seek(mci_offset, SEEK_SET);
 	if (!mcdFile.ReadBytes(&hdr, BLOCK_SIZE))
 	{
 		PanicAlertT("Failed to read header correctly\n(0x0000-0x1FFF)");
@@ -207,7 +225,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 //		bat = bat_backup; // needed?
 	}
 
-	mcdFile.Seek(0xa000, SEEK_SET);
+	mcdFile.Seek(mci_offset + MC_FST_BLOCK_SIZE, SEEK_SET);
 	
 	maxBlock = (u32)m_sizeMb * MBIT_TO_BLOCKS;
 	mc_data_blocks.reserve(maxBlock - MC_FST_BLOCKS);
@@ -252,6 +270,29 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 	}
 }
 
+bool GCMemcard::ValidMCIHeader()
+{
+	u16 totalblocks = m_sizeMb*MBIT_TO_BLOCKS;
+	char block_str[9];
+	sprintf(block_str, "%04ld-BLK", totalblocks);
+
+	return ((strcasecmp(mci_hdr.version, "SDMC01")==0) &&
+		(strcasecmp(mci_hdr.blocks, block_str)==0) &&
+		(mci_hdr.size == BE16(totalblocks)) &&
+		(mci_hdr.unknown == 0xF4));				
+}
+
+void GCMemcard::AddMCIHeader()
+{
+	u16 totalblocks = maxBlock*BLOCK_SIZE;
+	memset(&mci_hdr, 0, 0x40);
+	memcpy(mci_hdr.version, "SDMC01", 6);
+	snprintf(mci_hdr.blocks, 8, "%04ld-BLK", totalblocks);
+	mci_hdr.size = BE16(totalblocks);
+	mci_hdr.unknown = 0xF4;
+	mci_offset = 0x40;
+}
+
 bool GCMemcard::IsAsciiEncoding() const
 {
 	return hdr.Encoding == 0;
@@ -260,7 +301,12 @@ bool GCMemcard::IsAsciiEncoding() const
 bool GCMemcard::Save()
 {
 	File::IOFile mcdFile(m_fileName, "wb");
-	mcdFile.Seek(0, SEEK_SET);
+	
+	if (mci_offset)
+	{
+		mcdFile.WriteBytes(&mci_hdr, 0x40);
+	}
+	mcdFile.Seek(mci_offset, SEEK_SET);
 
 	mcdFile.WriteBytes(&hdr, BLOCK_SIZE);
 	mcdFile.WriteBytes(&dir, BLOCK_SIZE);

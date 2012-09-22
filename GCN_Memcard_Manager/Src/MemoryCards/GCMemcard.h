@@ -56,6 +56,7 @@ enum
 	DENTRY_SIZE    = 0x40,
 	BLOCK_SIZE     = 0x2000,
 	BAT_SIZE       = 0xFFB,
+	MC_FST_BLOCK_SIZE = (MC_FST_BLOCKS * BLOCK_SIZE),
 
 	MemCard59Mb   = 0x04,
 	MemCard123Mb  = 0x08,
@@ -74,6 +75,7 @@ class GCMemcard : NonCopyable
 private:
 	friend class CMemcardManagerDebug;
 	bool m_valid;
+	u8 mci_offset;
 	std::string m_fileName;
 
 	u32 maxBlock;
@@ -177,6 +179,20 @@ private:
 		Directory *dir, *dir_backup;
 		BlockAlloc *bat, *bat_backup;
 	};
+
+	// struct provided by
+	// mci2raw 0.1 by suloku 2012
+	struct mci_header
+	{
+		char version[6]; // Always "SDMC01" as far as I know
+		u16 pad1;
+		char blocks[8]; //Always "XXXX-BLK", where X the number of blocks (including the system blocks, so 64, 256, 1024 and 2048)
+		u8 pad2[32];
+		u16 size; //Number of blocks (including the system blocks)
+		u8 pad3[2];
+		u8 unknown; // Always 0xF4 as far as I know
+		u8 pad4[11];
+	}mci_hdr;
 #pragma pack(pop)
 
 	u32 ImportGciInternal(FILE* gcih, const char *inputFile, const std::string &outputFile);
@@ -187,6 +203,8 @@ public:
 	bool IsValid() const { return m_valid; }
 	bool IsAsciiEncoding() const;
 	bool Save();
+	bool ValidMCIHeader();
+	void AddMCIHeader();
 	bool Format(bool sjis = false, u16 SizeMb = MemCard2043Mb);
 	static bool Format(u8 * card_data, bool sjis = false, u16 SizeMb = MemCard2043Mb);
 	
