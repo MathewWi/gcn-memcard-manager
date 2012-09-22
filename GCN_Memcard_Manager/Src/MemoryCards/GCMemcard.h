@@ -54,6 +54,7 @@ enum
 	MBIT_TO_BLOCKS = 0x10,
 	DENTRY_STRLEN  = 0x20,
 	DENTRY_SIZE    = 0x40,
+	MCI_HDR_SIZE   = 0x40,
 	BLOCK_SIZE     = 0x2000,
 	BAT_SIZE       = 0xFFB,
 	MC_FST_BLOCK_SIZE = (MC_FST_BLOCKS * BLOCK_SIZE),
@@ -203,8 +204,16 @@ public:
 	bool IsValid() const { return m_valid; }
 	bool IsAsciiEncoding() const;
 	bool Save();
+	bool SaveAs(const char * destination);
+
 	bool ValidMCIHeader();
 	void AddMCIHeader();
+
+	bool ExportHDR(const char *fileName) const;
+	bool ReplaceHDR(const char *hdrFileName, const char * destination);
+
+	bool ChangeMemoryCardSize(u16 SizeMb = MemCard2043Mb);
+
 	bool Format(bool sjis = false, u16 SizeMb = MemCard2043Mb);
 	static bool Format(u8 * card_data, bool sjis = false, u16 SizeMb = MemCard2043Mb);
 	

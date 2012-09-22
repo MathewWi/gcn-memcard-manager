@@ -84,7 +84,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 		SplitPath(filename, NULL, NULL, &fileType);
 		if (!strcasecmp(fileType.c_str(), ".mci"))
 		{
-			mci_offset = 0x40;
+			mci_offset = MCI_HDR_SIZE;
 		}
 		else if (strcasecmp(fileType.c_str(), ".raw") && strcasecmp(fileType.c_str(), ".gcp"))
 		{
@@ -121,7 +121,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 		{
 
 			mcdFile.Seek(0, SEEK_SET);
-			mcdFile.ReadBytes(&mci_hdr, 0x40);
+			mcdFile.ReadBytes(&mci_hdr, MCI_HDR_SIZE);
 			if (!ValidMCIHeader())
 			{
 				PanicAlertT("%s failed to load as a mci memory card image\n File has an invalid mci header", filename);
@@ -284,13 +284,14 @@ bool GCMemcard::ValidMCIHeader()
 
 void GCMemcard::AddMCIHeader()
 {
+	mci_offset = MCI_HDR_SIZE;
+
 	u16 totalblocks = maxBlock*BLOCK_SIZE;
-	memset(&mci_hdr, 0, 0x40);
+	memset(&mci_hdr, 0, MCI_HDR_SIZE);
 	memcpy(mci_hdr.version, "SDMC01", 6);
 	snprintf(mci_hdr.blocks, 8, "%04ld-BLK", totalblocks);
 	mci_hdr.size = BE16(totalblocks);
 	mci_hdr.unknown = 0xF4;
-	mci_offset = 0x40;
 }
 
 bool GCMemcard::IsAsciiEncoding() const
@@ -304,7 +305,7 @@ bool GCMemcard::Save()
 	
 	if (mci_offset)
 	{
-		mcdFile.WriteBytes(&mci_hdr, 0x40);
+		mcdFile.WriteBytes(&mci_hdr, MCI_HDR_SIZE);
 	}
 	mcdFile.Seek(mci_offset, SEEK_SET);
 
@@ -319,6 +320,127 @@ bool GCMemcard::Save()
 	}
 
 	return mcdFile.Close();
+}
+
+bool GCMemcard::SaveAs(const char * destination)
+{
+	std::string oldFileName = m_fileName;
+	u8 old_mci_offset = mci_offset;
+	
+	if (File::Exists(destination))
+	{
+		if (!PanicYesNo ("Destination filename Exists. Overwrite?"))
+			return false;
+	}
+	
+	m_fileName = destination;
+
+	std::string extension;
+	SplitPath(m_fileName, NULL, NULL, &extension);
+	if (strcasecmp(extension.c_str(), ".mci")==0)
+	{
+		if (!ValidMCIHeader())
+		{
+			AddMCIHeader();
+		}
+	}
+	else
+	{
+		mci_offset = 0;
+	}
+
+	if (!Save())
+	{
+		m_fileName = oldFileName;
+		mci_offset = old_mci_offset;
+		return false;
+	}
+
+	return true;
+}
+
+bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
+{
+	if (SizeMb == m_sizeMb) return true;
+	switch (SizeMb)
+	{
+		case MemCard59Mb:
+		case MemCard123Mb:
+		case MemCard251Mb:
+		case Memcard507Mb:
+		case MemCard1019Mb:
+		case MemCard2043Mb:
+			break;
+		default:
+			PanicAlertT("%x is an invalid size for a memory card.\n valid sizes are %x,%x,%x,%x,%x,%x", SizeMb,
+					MemCard59Mb, MemCard123Mb, MemCard251Mb, Memcard507Mb, MemCard1019Mb, MemCard2043Mb);
+			return false;
+	}
+
+	if (SizeMb < m_sizeMb)
+	{
+		PanicAlertT("Shrinking not yet implemented");
+		return false;
+	}
+
+	m_sizeMb = SizeMb;
+	*(u16*)hdr.SizeMb = BE16(m_sizeMb);
+
+	u32 oldmaxBlock = maxBlock;
+
+	maxBlock = (u32)m_sizeMb * MBIT_TO_BLOCKS;
+	u16 addedblocks = maxBlock - oldmaxBlock;
+	PanicAlert("%x\n%x\n%x", addedblocks, BE16(CurrentBat->FreeBlocks), BE16(PreviousBat->FreeBlocks));
+	CurrentBat->FreeBlocks = BE16(BE16(CurrentBat->FreeBlocks)+addedblocks);
+	PreviousBat->FreeBlocks = BE16(BE16(PreviousBat->FreeBlocks)+addedblocks);
+	FixChecksums();
+	mc_data_blocks.resize(maxBlock - MC_FST_BLOCKS);
+
+	for (u32 i = 0; i < addedblocks; ++i);
+	{
+		GCMBlock b;
+		mc_data_blocks.push_back(b);
+	}
+	Save();
+}
+
+bool GCMemcard::ReplaceHDR(const char *hdrFileName, const char * destination)
+{
+	if (File::Exists(destination))
+	{
+		PanicAlert ("Destination filename must not exist, header replacement canceled");
+		return false;
+	}
+
+
+	File::IOFile hdrFile(hdrFileName, "rb");
+	if (hdrFile.GetSize() != BLOCK_SIZE)
+	{
+		PanicAlert ("Header size must be 0x2000 bytes");
+		return false;
+	}
+
+	Header old_hdr = hdr,
+		   new_hdr;
+
+	hdrFile.ReadBytes(&new_hdr, BLOCK_SIZE);
+	*(u16*)new_hdr.SizeMb = BE16(m_sizeMb);
+	calc_checksumsBE((u16*)&new_hdr, 0xFE, &new_hdr.Checksum, &new_hdr.Checksum_Inv);
+	
+	hdr = new_hdr;
+	if (!SaveAs(destination))
+	{
+		hdr = old_hdr;
+		return false;
+	}
+	return true;
+}
+
+bool GCMemcard::ExportHDR(const char *fileName) const
+{
+	File::IOFile hdrFile(m_fileName, "wb");
+	hdrFile.WriteBytes(&hdr, BLOCK_SIZE);
+	return hdrFile.Close();
 }
 
 void GCMemcard::calc_checksumsBE(u16 *buf, u32 length, u16 *csum, u16 *inv_csum)
@@ -926,7 +1048,7 @@ u32 GCMemcard::ImportGciInternal(FILE* gcih, const char *inputFile, const std::s
 	std::vector<GCMBlock> saveData;
 	saveData.reserve(size);
 
-	for (int i = 0; i < size; ++i)
+	for (u32 i = 0; i < size; ++i)
 	{
 		GCMBlock b;
 		gci.ReadBytes(b.block, BLOCK_SIZE);
@@ -1039,7 +1161,7 @@ u32 GCMemcard::ExportGci(u8 index, const char *fileName, const std::string &dire
 		return NOMEMCARD;
 	}
 	gci.Seek(DENTRY_SIZE + offset, SEEK_SET);
-	for (int i = 0; i < size; ++i)
+	for (u32 i = 0; i < size; ++i)
 	{
 		gci.WriteBytes(saveData[i].block, BLOCK_SIZE);
 	}
