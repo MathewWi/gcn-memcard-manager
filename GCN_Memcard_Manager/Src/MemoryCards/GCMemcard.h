@@ -207,12 +207,13 @@ public:
 	bool SaveAs(const char * destination);
 
 	bool ValidMCIHeader();
-	void AddMCIHeader();
+	void SetMCIHeader();
 
-	bool ExportHDR(const char *fileName) const;
+	bool ExportHDR(const char *hdrFileName) const;
 	bool ReplaceHDR(const char *hdrFileName, const char * destination);
 
 	bool ChangeMemoryCardSize(u16 SizeMb = MemCard2043Mb);
+	u8 GetMinimumSize() const;
 
 	bool Format(bool sjis = false, u16 SizeMb = MemCard2043Mb);
 	static bool Format(u8 * card_data, bool sjis = false, u16 SizeMb = MemCard2043Mb);

@@ -282,10 +282,8 @@ bool GCMemcard::ValidMCIHeader()
 		(mci_hdr.unknown == 0xF4));				
 }
 
-void GCMemcard::AddMCIHeader()
+void GCMemcard::SetMCIHeader()
 {
-	mci_offset = MCI_HDR_SIZE;
-
 	u16 totalblocks = maxBlock*BLOCK_SIZE;
 	memset(&mci_hdr, 0, MCI_HDR_SIZE);
 	memcpy(mci_hdr.version, "SDMC01", 6);
@@ -314,7 +312,7 @@ bool GCMemcard::Save()
 	mcdFile.WriteBytes(&dir_backup, BLOCK_SIZE);
 	mcdFile.WriteBytes(&bat, BLOCK_SIZE);
 	mcdFile.WriteBytes(&bat_backup, BLOCK_SIZE);
-	for (int i = 0; i < maxBlock - MC_FST_BLOCKS; ++i)
+	for (u16 i = 0; i < maxBlock - MC_FST_BLOCKS; ++i)
 	{
 		mcdFile.WriteBytes(mc_data_blocks[i].block, BLOCK_SIZE);
 	}
@@ -339,10 +337,8 @@ bool GCMemcard::SaveAs(const char * destination)
 	SplitPath(m_fileName, NULL, NULL, &extension);
 	if (strcasecmp(extension.c_str(), ".mci")==0)
 	{
-		if (!ValidMCIHeader())
-		{
-			AddMCIHeader();
-		}
+		mci_offset = MCI_HDR_SIZE;
+		SetMCIHeader();
 	}
 	else
 	{
@@ -377,9 +373,9 @@ bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
 			return false;
 	}
 
-	if (SizeMb < m_sizeMb)
+	if ((SizeMb < m_sizeMb) && (SizeMb < GetMinimumSize()))
 	{
-		PanicAlertT("Shrinking not yet implemented");
+		PanicAlertT("Memorycard has too many used blocks to be shrunk to size %x", SizeMb*MBIT_TO_BLOCKS);
 		return false;
 	}
 
@@ -389,11 +385,13 @@ bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
 	u32 oldmaxBlock = maxBlock;
 
 	maxBlock = (u32)m_sizeMb * MBIT_TO_BLOCKS;
-	u16 addedblocks = maxBlock - oldmaxBlock;
-	PanicAlert("%x\n%x\n%x", addedblocks, BE16(CurrentBat->FreeBlocks), BE16(PreviousBat->FreeBlocks));
-	CurrentBat->FreeBlocks = BE16(BE16(CurrentBat->FreeBlocks)+addedblocks);
-	PreviousBat->FreeBlocks = BE16(BE16(PreviousBat->FreeBlocks)+addedblocks);
+	u16 addedblocks = (u16)(maxBlock - oldmaxBlock);
+
+	CurrentBat->FreeBlocks  = BE16(BE16(CurrentBat->FreeBlocks)  + addedblocks);
+	PreviousBat->FreeBlocks = BE16(BE16(PreviousBat->FreeBlocks) + addedblocks);
+
 	FixChecksums();
+
 	mc_data_blocks.resize(maxBlock - MC_FST_BLOCKS);
 
 	for (u32 i = 0; i < addedblocks; ++i);
@@ -401,7 +399,24 @@ bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
 		GCMBlock b;
 		mc_data_blocks.push_back(b);
 	}
-	Save();
+
+	SetMCIHeader();
+	return Save();
+}
+
+u8 GCMemcard::GetMinimumSize() const
+{
+	u16 MinimumSize = m_sizeMb*MBIT_TO_BLOCKS;
+	u16 NextSizeDown = MinimumSize >>1;
+	while (NextSizeDown >= (MemCard59Mb*MBIT_TO_BLOCKS))
+	{
+		for (u16 i = NextSizeDown-MC_FST_BLOCKS; i < MinimumSize-MC_FST_BLOCKS; ++i)
+			if (CurrentBat->Map[i])
+				false;
+		MinimumSize = NextSizeDown;
+	}
+
+	return (u8)(MinimumSize/MBIT_TO_BLOCKS);
 }
 
 bool GCMemcard::ReplaceHDR(const char *hdrFileName, const char * destination)
@@ -436,9 +451,9 @@ bool GCMemcard::ReplaceHDR(const char *hdrFileName, const char * destination)
 	return true;
 }
 
-bool GCMemcard::ExportHDR(const char *fileName) const
+bool GCMemcard::ExportHDR(const char *hdrFileName) const
 {
-	File::IOFile hdrFile(m_fileName, "wb");
+	File::IOFile hdrFile(hdrFileName, "wb");
 	hdrFile.WriteBytes(&hdr, BLOCK_SIZE);
 	return hdrFile.Close();
 }
