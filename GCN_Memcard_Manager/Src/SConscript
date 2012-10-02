@@ -13,6 +13,7 @@ if wxenv['HAVE_WX']:
 		'mcmMain.cpp',
 		'GUI/MCMdebug.cpp',
 		'GUI/MemcardManager.cpp',
+		'GUI/MemcardSelectPanel.cpp',
 		'MemoryCards/GCMemcard.cpp',
 		]
 
