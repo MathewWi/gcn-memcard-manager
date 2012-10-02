@@ -19,6 +19,9 @@
       <Filter>Memcard</Filter>
     </ClCompile>
     <ClCompile Include="Src\mcmMain.cpp" />
+    <ClCompile Include="Src\GUI\MemcardSelectPanel.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\GUI\MCMdebug.h">
@@ -33,5 +36,8 @@
     <ClInclude Include="Src\IPLTime.h" />
     <ClInclude Include="Src\MCMmain.h" />
     <ClInclude Include="Src\Sram.h" />
+    <ClInclude Include="Src\GUI\MemcardSelectPanel.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

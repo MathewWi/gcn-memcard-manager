@@ -62,7 +62,7 @@ void decodeCI8image(u32* dst, u8* src, u16* pal, int width, int height)
 	}
 }
 
-GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
+GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis, u16 _sizeMb)
 	: m_valid(false)
 	, mci_offset(0)
 	, m_fileName(filename)
@@ -70,11 +70,14 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 	File::IOFile mcdFile(m_fileName, "r+b");
 	if (!mcdFile.IsOpen())
 	{
-		if (!forceCreation && !AskYesNoT("\"%s\" does not exist.\n Create a new 16MB Memcard?", filename))
+		if (!forceCreation && !AskYesNoT("\"%s\" does not exist.\n Create a new %d-block Memcard?", filename, (_sizeMb*MBIT_TO_BLOCKS)-MC_FST_BLOCKS))
 		{
 			return;
 		}
-		Format(forceCreation ? sjis : !AskYesNoT("Format as ascii (NTSC\\PAL)?\nChoose no for sjis (NTSC-J)"));
+		
+		m_valid = Format(forceCreation ? sjis : !AskYesNoT("Format as ascii (NTSC\\PAL)?\nChoose no for sjis (NTSC-J)"), _sizeMb);
+		void SetupCurrentDirBat();
+		
 		return;
 	}
 	else
@@ -91,7 +94,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 			PanicAlertT("File has the extension \"%s\"\nvalid extensions are (.raw/.gcp)", fileType.c_str());
 			return;
 		}
-		u32 size = mcdFile.GetSize() - mci_offset;
+		u32 size = (u32)mcdFile.GetSize() - mci_offset;
 		if (size < MC_FST_BLOCKS*BLOCK_SIZE)
 		{
 			PanicAlertT("%s failed to load as a memorycard \nfile is not large enough to be a valid memory card file (0x%x bytes)", filename, size);
@@ -103,7 +106,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 				return;
 		}
 
-		m_sizeMb = (size/BLOCK_SIZE) / MBIT_TO_BLOCKS;
+		m_sizeMb = (u16)(size/BLOCK_SIZE) / MBIT_TO_BLOCKS;
 		switch (m_sizeMb)
 		{
 			case MemCard59Mb:
@@ -227,11 +230,11 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 
 	mcdFile.Seek(mci_offset + MC_FST_BLOCK_SIZE, SEEK_SET);
 	
-	maxBlock = (u32)m_sizeMb * MBIT_TO_BLOCKS;
+	maxBlock = m_sizeMb * MBIT_TO_BLOCKS;
 	mc_data_blocks.reserve(maxBlock - MC_FST_BLOCKS);
 
 	m_valid = true;
-	for (u32 i = MC_FST_BLOCKS; i < maxBlock; ++i)
+	for (u16 i = MC_FST_BLOCKS; i < maxBlock; ++i)
 	{
 		GCMBlock b;
 		if (mcdFile.ReadBytes(b.block, BLOCK_SIZE))
@@ -248,6 +251,11 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis)
 
 	mcdFile.Close();
 
+	SetCurrentDirBatInternal();
+}
+
+void GCMemcard::SetCurrentDirBatInternal()
+{
 	if (BE16(dir.UpdateCounter) > (BE16(dir_backup.UpdateCounter)))
 	{
 		CurrentDir = &dir;
@@ -284,11 +292,10 @@ bool GCMemcard::ValidMCIHeader()
 
 void GCMemcard::SetMCIHeader()
 {
-	u16 totalblocks = maxBlock*BLOCK_SIZE;
 	memset(&mci_hdr, 0, MCI_HDR_SIZE);
 	memcpy(mci_hdr.version, "SDMC01", 6);
-	snprintf(mci_hdr.blocks, 8, "%04ld-BLK", totalblocks);
-	mci_hdr.size = BE16(totalblocks);
+	snprintf(mci_hdr.blocks, 8, "%04ld-BLK", maxBlock);
+	mci_hdr.size = BE16(maxBlock);
 	mci_hdr.unknown = 0xF4;
 }
 
@@ -358,6 +365,8 @@ bool GCMemcard::SaveAs(const char * destination)
 bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
 {
 	if (SizeMb == m_sizeMb) return true;
+	
+	u16 minimumSize = m_sizeMb;
 	switch (SizeMb)
 	{
 		case MemCard59Mb:
@@ -373,18 +382,18 @@ bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
 			return false;
 	}
 
-	if ((SizeMb < m_sizeMb) && (SizeMb < GetMinimumSize()))
+	if ((SizeMb < m_sizeMb) && (SizeMb < (minimumSize = GetMinimumSize())))
 	{
-		PanicAlertT("Memorycard has too many used blocks to be shrunk to size %x", SizeMb*MBIT_TO_BLOCKS);
+		PanicAlertT("Memory card has too many used blocks\nThe smallest size available for this memory card is %d-blocks", /*SizeMb*MBIT_TO_BLOCKS-MC_FST_BLOCKS*/ minimumSize*MBIT_TO_BLOCKS-MC_FST_BLOCKS);
 		return false;
 	}
 
 	m_sizeMb = SizeMb;
 	*(u16*)hdr.SizeMb = BE16(m_sizeMb);
 
-	u32 oldmaxBlock = maxBlock;
+	u16 oldmaxBlock = maxBlock;
 
-	maxBlock = (u32)m_sizeMb * MBIT_TO_BLOCKS;
+	maxBlock = m_sizeMb * MBIT_TO_BLOCKS;
 	u16 addedblocks = (u16)(maxBlock - oldmaxBlock);
 
 	CurrentBat->FreeBlocks  = BE16(BE16(CurrentBat->FreeBlocks)  + addedblocks);
@@ -394,7 +403,7 @@ bool GCMemcard::ChangeMemoryCardSize(u16 SizeMb)
 
 	mc_data_blocks.resize(maxBlock - MC_FST_BLOCKS);
 
-	for (u32 i = 0; i < addedblocks; ++i);
+	for (u16 i = 0; i < addedblocks; ++i);
 	{
 		GCMBlock b;
 		mc_data_blocks.push_back(b);
@@ -412,10 +421,11 @@ u8 GCMemcard::GetMinimumSize() const
 	{
 		for (u16 i = NextSizeDown-MC_FST_BLOCKS; i < MinimumSize-MC_FST_BLOCKS; ++i)
 			if (CurrentBat->Map[i])
-				false;
+				goto end;
 		MinimumSize = NextSizeDown;
+		NextSizeDown = MinimumSize >>1;
 	}
-
+	end:
 	return (u8)(MinimumSize/MBIT_TO_BLOCKS);
 }
 
@@ -691,7 +701,7 @@ u16 GCMemcard::DEntry_FirstBlock(u8 index) const
 		return 0xFFFF;
 
 	u16 block = BE16(CurrentDir->Dir[index].FirstBlock);
-	if (block > (u16) maxBlock) return 0xFFFF;
+	if (block > maxBlock) return 0xFFFF;
 	return block;
 }
 
@@ -701,7 +711,7 @@ u16 GCMemcard::DEntry_BlockCount(u8 index) const
 		return 0xFFFF;
 
 	u16 blocks = BE16(CurrentDir->Dir[index].BlockCount);
-	if (blocks > (u16) maxBlock) return 0xFFFF;
+	if (blocks > maxBlock) return 0xFFFF;
 	return blocks;
 }
 
@@ -718,7 +728,7 @@ std::string GCMemcard::GetSaveComment1(u8 index) const
 		return "";
 
 	u32 Comment1 = BE32(CurrentDir->Dir[index].CommentsAddr);
-	u32 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
+	u16 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
 	if ((DataBlock > maxBlock) || (Comment1 == 0xFFFFFFFF))
 	{
 		return "";
@@ -733,7 +743,7 @@ std::string GCMemcard::GetSaveComment2(u8 index) const
 
 	u32 Comment1 = BE32(CurrentDir->Dir[index].CommentsAddr);
 	u32 Comment2 = Comment1 + DENTRY_STRLEN;
-	u32 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
+	u16 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
 	if ((DataBlock > maxBlock) || (Comment1 == 0xFFFFFFFF))
 	{
 		return "";
@@ -801,7 +811,7 @@ u32 GCMemcard::GetSaveData(u8 index,  std::vector<GCMBlock> & Blocks) const
 
 	u16 block = DEntry_FirstBlock(index);
 	u16 BlockCount = DEntry_BlockCount(index);
-	u16 memcardSize = BE16(hdr.SizeMb) * MBIT_TO_BLOCKS;
+	//u16 memcardSize = BE16(hdr.SizeMb) * MBIT_TO_BLOCKS;
 
 	if ((block == 0xFFFF) || (BlockCount == 0xFFFF))
 	{
@@ -870,7 +880,7 @@ u32 GCMemcard::ImportFile(DEntry& direntry, std::vector<GCMBlock> &saveBlocks)
 		PreviousDir = &dir;
 	}
 
-	int fileBlocks = BE16(direntry.BlockCount);
+	u16 fileBlocks = BE16(direntry.BlockCount);
 
 	FZEROGX_MakeSaveGameValid(direntry, saveBlocks);
 	PSO_MakeSaveGameValid(direntry, saveBlocks);
@@ -878,7 +888,7 @@ u32 GCMemcard::ImportFile(DEntry& direntry, std::vector<GCMBlock> &saveBlocks)
 	BlockAlloc UpdatedBat = *CurrentBat;
 	u16 nextBlock;
 	// keep assuming no freespace fragmentation, and copy over all the data
-	for (int i = 0; i < fileBlocks; ++i)
+	for (u16 i = 0; i < fileBlocks; ++i)
 	{ 
 		if (firstBlock == 0xFFFF)
 			PanicAlert("Fatal Error");
@@ -1047,14 +1057,14 @@ u32 GCMemcard::ImportGciInternal(FILE* gcih, const char *inputFile, const std::s
 
 	DEntry tempDEntry;
 	gci.ReadBytes(&tempDEntry, DENTRY_SIZE);
-	const int fStart = (int)gci.Tell();
+	const u32 fStart = (u32)gci.Tell();
 	gci.Seek(0, SEEK_END);
-	const int length = (int)gci.Tell() - fStart;
+	const u32 length = (u32)gci.Tell() - fStart;
 	gci.Seek(offset + DENTRY_SIZE, SEEK_SET);
 
 	Gcs_SavConvert(tempDEntry, offset, length);
 
-	if (length != BE16(tempDEntry.BlockCount) * BLOCK_SIZE)
+	if (length != ((u32)BE16(tempDEntry.BlockCount) * BLOCK_SIZE))
 		return LENGTHFAIL;
 	if (gci.Tell() != offset + DENTRY_SIZE) // Verify correct file position
 		return OPENFAIL;
@@ -1187,7 +1197,7 @@ u32 GCMemcard::ExportGci(u8 index, const char *fileName, const std::string &dire
 		return WRITEFAIL;
 }
 
-void GCMemcard::Gcs_SavConvert(DEntry &tempDEntry, int saveType, int length)
+void GCMemcard::Gcs_SavConvert(DEntry &tempDEntry, int saveType, u32 length)
 {
 	switch(saveType)
 	{
@@ -1197,7 +1207,7 @@ void GCMemcard::Gcs_SavConvert(DEntry &tempDEntry, int saveType, int length)
 		// It is stored only within the corresponding GSV file.
 		// If the GCS file is added without using the GameSaves software,
 		// the value stored is always "1"
-		*(u16*)&tempDEntry.BlockCount = BE16(length / BLOCK_SIZE);
+		*(u16*)&tempDEntry.BlockCount = BE16((u16)(length / BLOCK_SIZE));
 	}
 		break;
 	case SAV:
@@ -1239,7 +1249,7 @@ bool GCMemcard::ReadBannerRGBA8(u8 index, u32* buffer) const
 		return false;
 
 	u32 DataOffset = BE32(CurrentDir->Dir[index].ImageOffset);
-	u32 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
+	u16 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
 
 	if ((DataBlock > maxBlock) || (DataOffset == 0xFFFFFFFF))
 	{
@@ -1283,7 +1293,7 @@ u32 GCMemcard::ReadAnimRGBA8(u8 index, u32* buffer, u8 *delays) const
 	int bnrFormat = (flags&3);
 
 	u32 DataOffset = BE32(CurrentDir->Dir[index].ImageOffset);
-	u32 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
+	u16 DataBlock = BE16(CurrentDir->Dir[index].FirstBlock) - MC_FST_BLOCKS;
 
 	if ((DataBlock > maxBlock) || (DataOffset == 0xFFFFFFFF))
 	{
@@ -1403,17 +1413,16 @@ bool GCMemcard::Format(bool sjis, u16 SizeMb)
 	*(u16*)hdr.SizeMb = BE16(SizeMb);
 	hdr.Encoding = BE16(sjis ? 1 : 0);
 	FormatInternal(gcp);
+	SetCurrentDirBatInternal();
 
 	m_sizeMb = SizeMb;
-	maxBlock = (u32)m_sizeMb * MBIT_TO_BLOCKS;
+	maxBlock = m_sizeMb * MBIT_TO_BLOCKS;
 	mc_data_blocks.reserve(maxBlock - MC_FST_BLOCKS);
-	for (u32 i = 0; i < (maxBlock - MC_FST_BLOCKS); ++i)
+	for (u16 i = 0; i < (maxBlock - MC_FST_BLOCKS); ++i)
 	{
 		GCMBlock b;
 		mc_data_blocks.push_back(b);
 	}
-
-	m_valid = true;
 
 	return Save();
 }

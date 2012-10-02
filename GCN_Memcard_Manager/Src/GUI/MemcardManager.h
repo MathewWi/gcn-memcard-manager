@@ -17,6 +17,7 @@
 
 #ifndef __MEMCARD_MANAGER_h__
 #define __MEMCARD_MANAGER_h__
+#include "MemcardSelectPanel.h"
 
 #include <wx/wx.h>
 #include <wx/sizer.h>
@@ -32,7 +33,9 @@
 #include "MemoryCards/GCMemcard.h"
 
 #undef MEMCARD_MANAGER_STYLE
-#define MEMCARD_MANAGER_STYLE wxCAPTION | wxSYSTEM_MENU | wxDIALOG_NO_PARENT | wxCLOSE_BOX | wxRESIZE_BORDER | wxMAXIMIZE_BOX
+#define MEMCARD_MANAGER_STYLE (wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
+
+//wxCAPTION | wxSYSTEM_MENU | wxDIALOG_NO_PARENT | wxCLOSE_BOX | wxRESIZE_BORDER | wxMAXIMIZE_BOX
 #define MEMCARDMAN_TITLE _trans("Memory Card Manager WARNING-Make backups before using, should be fixed but could mangle stuff!")
 
 #define E_SAVEFAILED "File write failed"
@@ -48,8 +51,7 @@
 #include "MCMdebug.h"
 #endif
 
-
-class CMemcardManager : public wxDialog
+class CMemcardManager : public wxFrame
 {
 	public:
 
@@ -59,7 +61,7 @@ class CMemcardManager : public wxDialog
 
 	private:
 		DECLARE_EVENT_TABLE();
-
+		wxWindow *parent;
 		int page[2],
 			itemsPerPage,
 			maxPages;
@@ -83,6 +85,15 @@ class CMemcardManager : public wxDialog
 
 		enum
 		{
+			IDM_NEWMEMCARD_A = 4000,
+			IDM_NEWMEMCARD_B,
+			IDM_OPENMEMCARD_A,
+			IDM_OPENMEMCARD_B,
+			IDM_SAVEAS_A,
+			IDM_SAVEAS_B,
+			IDM_RESIZE_A,
+			IDM_RESIZE_B,
+
 			ID_COPYFROM_A = 1000,	// Do not rearrange these items,
 			ID_COPYFROM_B,			// ID_..._B must be 1 more than ID_..._A
 			ID_FIXCHECKSUM_A,
@@ -133,9 +144,12 @@ class CMemcardManager : public wxDialog
 		GCMemcard *memoryCard[2];
 
 		void CreateGUIControls();
+		void CreateMenuBar();
 		void OnClose(wxCloseEvent& event);
 		void CopyDeleteClick(wxCommandEvent& event);
+		void CreateNewMemcard(int slot, wxString path, bool resizeOnly=false);
 		bool ReloadMemcard(const char *fileName, int card);
+		void TestFunctions(wxCommandEvent& event);
 		void OnMenuChange(wxCommandEvent& event);
 		void OnPageChange(wxCommandEvent& event);
 		void OnPathChange(wxFileDirPickerEvent& event);

@@ -71,7 +71,7 @@ wxBitmap wxBitmapFromMemoryRGBA(const unsigned char* data, int width, int height
 	return map;
 }
 
-BEGIN_EVENT_TABLE(CMemcardManager, wxDialog)
+BEGIN_EVENT_TABLE(CMemcardManager, wxFrame)
 	EVT_CLOSE(CMemcardManager::OnClose)
 	EVT_BUTTON(ID_COPYFROM_A,CMemcardManager::CopyDeleteClick)
 	EVT_BUTTON(ID_COPYFROM_B,CMemcardManager::CopyDeleteClick)
@@ -89,6 +89,8 @@ BEGIN_EVENT_TABLE(CMemcardManager, wxDialog)
 
 	EVT_FILEPICKER_CHANGED(ID_MEMCARDPATH_A,CMemcardManager::OnPathChange)
 	EVT_FILEPICKER_CHANGED(ID_MEMCARDPATH_B,CMemcardManager::OnPathChange)
+	
+	EVT_MENU_RANGE(IDM_NEWMEMCARD_A, IDM_RESIZE_B, CMemcardManager::TestFunctions)
 
 	EVT_MENU_RANGE(ID_MEMCARDPATH_A, ID_USEPAGES, CMemcardManager::OnMenuChange)
 	EVT_MENU_RANGE(ID_COPYFROM_A, ID_CONVERTTOGCI, CMemcardManager::CopyDeleteClick)
@@ -96,8 +98,77 @@ BEGIN_EVENT_TABLE(CMemcardManager, wxDialog)
 	EVT_MENU_RANGE(COLUMN_BANNER, NUMBER_OF_COLUMN, CMemcardManager::OnMenuChange)
 END_EVENT_TABLE()
 
+void CMemcardManager::TestFunctions(wxCommandEvent& event)
+{
+	int id = event.GetId();
+	wxString path;
+	GCMemcard *memcard;
+
+	switch (id)
+	{
+	case IDM_RESIZE_A:
+	case IDM_RESIZE_B:
+		CreateNewMemcard(id - IDM_RESIZE_A, m_MemcardPath[id - IDM_RESIZE_A]->GetPath(), true);
+		break;
+	case IDM_NEWMEMCARD_A:
+	case IDM_NEWMEMCARD_B:
+		CreateNewMemcard(id - IDM_NEWMEMCARD_A, wxEmptyString);
+		break;
+	case IDM_OPENMEMCARD_A:
+	case IDM_OPENMEMCARD_B:
+			path = wxFileSelector(
+				_("Choose a memory card:"),
+				wxString::From8BitData(File::GetUserPath(D_GCUSER_IDX).c_str()), wxEmptyString, wxEmptyString,
+				_("Gamecube Memory Cards (*.raw,*.gcp,*.mci)") +
+				wxString(wxT("|*.raw;*.gcp;*.mci")),
+				wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+				this);
+		m_MemcardPath[id - IDM_OPENMEMCARD_A]->SetPath(path);
+		ChangePath(id - IDM_OPENMEMCARD_A);
+		break;
+	case IDM_SAVEAS_A:
+	case IDM_SAVEAS_B:
+		memcard = memoryCard[id-IDM_SAVEAS_A];
+		if (memcard && memcard->IsValid())
+		{
+			path = wxFileSelector(
+				_("Save memory card as:"),
+				wxString::From8BitData(File::GetUserPath(D_GCUSER_IDX).c_str()), wxEmptyString, wxEmptyString,
+				_("Gamecube Memory Cards (*.raw,*.gcp,*.mci)") +
+				wxString(wxT("|*.raw;*.gcp;*.mci")),
+				wxFD_SAVE| wxFD_OVERWRITE_PROMPT,
+				this);
+			if (memcard->SaveAs(path.mb_str()))
+			{
+				m_MemcardPath[id - IDM_SAVEAS_A]->SetPath(path);
+				ChangePath(id - IDM_SAVEAS_A);
+			}
+		}
+		break;
+	default:
+		break;
+	}
+}
+void CMemcardManager::CreateNewMemcard(int slot, wxString path, bool resizeOnly)
+{
+	wxString filename;
+	if ((slot == SLOT_A) || (slot == SLOT_B))
+	{
+		CMemcardSelectPanel * NewMemcardPanel = new CMemcardSelectPanel(this, path, resizeOnly);
+
+		filename = NewMemcardPanel->GetSelectionModal();
+		if (filename != wxEmptyString)
+		{
+			m_MemcardPath[slot]->SetPath(filename);
+		}
+		
+		ChangePath(slot);	
+	}
+}
+
 CMemcardManager::CMemcardManager(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& position, const wxSize& size, long style)
-	: wxDialog(parent, id, title, position, size, style)
+	: wxFrame(parent, id, title, position, size, style),
+	parent(parent)
 {
 	memoryCard[SLOT_A]=NULL;
 	memoryCard[SLOT_B]=NULL;
@@ -118,7 +189,11 @@ CMemcardManager::CMemcardManager(wxWindow* parent, wxWindowID id, const wxString
 #ifdef MCM_DEBUG_FRAME
 	MemcardManagerDebug = NULL;
 #endif
+	CreateMenuBar();
 	CreateGUIControls();
+	SetBackgroundColour(m_ConvertToGci->GetBackgroundColour());//wxColour(240,240,240));
+	
+	SetIcon(wxNullIcon);
 }
 
 CMemcardManager::~CMemcardManager()
@@ -212,6 +287,34 @@ bool CMemcardManager::SaveSettings()
 #endif
 
 
+}
+
+void CMemcardManager::CreateMenuBar()
+{
+	if (GetMenuBar()) GetMenuBar()->Destroy();
+	wxMenuBar * m_MenuBar = new wxMenuBar();
+	wxMenu *memcardMenu[2];
+	for (int slot = SLOT_A; slot <= SLOT_B; slot++)
+	{
+		memcardMenu[slot] = new wxMenu();
+		memcardMenu[slot]->Append(IDM_NEWMEMCARD_A + slot, _("New Memory Card"));
+		memcardMenu[slot]->Append(IDM_OPENMEMCARD_A + slot, _("Open Memory Card"));
+		memcardMenu[slot]->Append(IDM_SAVEAS_A + slot, _("Save Memory Card As..."));
+		memcardMenu[slot]->Append(IDM_RESIZE_A + slot, _("Resize Memory Card "));
+		
+			
+		m_MenuBar->Append(memcardMenu[slot], wxString::Format(_("Memory Card %c"), 'A' + slot));
+	}
+	SetMenuBar(m_MenuBar);
+	wxMenuBar const * tmpMenu = GetMenuBar();
+	//tmpMenu->FindItem(IDM_NEWMEMCARD_A + slot)->Enable(false);	
+	//tmpMenu->FindItem(IDM_NEWMEMCARD_B + slot)->Enable(false);
+	//tmpMenu->FindItem(IDM_OPENMEMCARD_A + slot)->Enable(false);
+	//tmpMenu->FindItem(IDM_OPENMEMCARD_B + slot)->Enable(false);
+	tmpMenu->FindItem(IDM_SAVEAS_A)->Enable(false);
+	tmpMenu->FindItem(IDM_SAVEAS_B)->Enable(false);
+	tmpMenu->FindItem(IDM_RESIZE_A)->Enable(false);
+	tmpMenu->FindItem(IDM_RESIZE_B)->Enable(false);
 }
 
 void CMemcardManager::CreateGUIControls()
@@ -320,6 +423,15 @@ void CMemcardManager::ChangePath(int slot)
 {
 	int slot2 = (slot == SLOT_A) ? SLOT_B : SLOT_A;
 	page[slot] = FIRSTPAGE;
+
+	if (m_MemcardPath[slot]->GetPath() != wxEmptyString && !File::Exists(std::string(m_MemcardPath[slot]->GetPath().mb_str())))
+	{
+		wxString path = m_MemcardPath[slot]->GetPath();
+		m_MemcardPath[slot]->SetPath(wxEmptyString);
+		CreateNewMemcard(slot, path);
+		return;
+	}
+
 	if (mcmSettings.usePages && m_PrevPage[slot]->IsEnabled())
 	{
 		m_PrevPage[slot]->Disable();
@@ -341,6 +453,12 @@ void CMemcardManager::ChangePath(int slot)
 			m_SaveImport[slot]->Enable();
 			m_SaveExport[slot]->Enable();
 			m_Delete[slot]->Enable();
+			
+			wxMenuBar const * tmpMenu = GetMenuBar();
+			//tmpMenu->FindItem(IDM_NEWMEMCARD_A + slot)->Enable();
+			//tmpMenu->FindItem(IDM_OPENMEMCARD_A + slot)->Enable();
+			tmpMenu->FindItem(IDM_SAVEAS_A + slot)->Enable();
+			tmpMenu->FindItem(IDM_RESIZE_A + slot)->Enable();
 		}
 		else
 		{
@@ -349,6 +467,12 @@ void CMemcardManager::ChangePath(int slot)
 				delete memoryCard[slot];
 				memoryCard[slot] = NULL;
 			}
+			wxMenuBar const * tmpMenu = GetMenuBar();
+			//tmpMenu->FindItem(IDM_NEWMEMCARD_A + slot)->Enable();
+			//tmpMenu->FindItem(IDM_OPENMEMCARD_A + slot)->Enable();
+			tmpMenu->FindItem(IDM_SAVEAS_A + slot)->Enable(false);
+			tmpMenu->FindItem(IDM_RESIZE_A + slot)->Enable(false);
+
 			mcmSettings.twoCardsLoaded = false;
 			m_MemcardPath[slot]->SetPath(wxEmptyString);
 			m_MemcardList[slot]->ClearAll();

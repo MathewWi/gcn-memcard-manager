@@ -79,7 +79,7 @@ private:
 	u8 mci_offset;
 	std::string m_fileName;
 
-	u32 maxBlock;
+	u16 maxBlock;
 	u16 m_sizeMb;
 	struct GCMBlock
 	{
@@ -198,11 +198,13 @@ private:
 
 	u32 ImportGciInternal(FILE* gcih, const char *inputFile, const std::string &outputFile);
 	static void FormatInternal(GCMC_Header &GCP);
+	void SetCurrentDirBatInternal();
 public:
 
-	GCMemcard(const char* fileName, bool forceCreation=false, bool sjis=false);
+	GCMemcard(const char* fileName, bool forceCreation=false, bool sjis=false, u16 size=MemCard2043Mb);
 	bool IsValid() const { return m_valid; }
 	bool IsAsciiEncoding() const;
+	u16 GetSize() const { return m_sizeMb; }
 	bool Save();
 	bool SaveAs(const char * destination);
 
@@ -277,7 +279,7 @@ public:
 
 	// GCI files are untouched, SAV files are byteswapped
 	// GCS files have the block count set, default is 1 (For export as GCS)
-	static void Gcs_SavConvert(DEntry &tempDEntry, int saveType, int length = BLOCK_SIZE);
+	static void Gcs_SavConvert(DEntry &tempDEntry, int saveType, u32 length = BLOCK_SIZE);
 
 	// reads the banner image
 	bool ReadBannerRGBA8(u8 index, u32* buffer) const;

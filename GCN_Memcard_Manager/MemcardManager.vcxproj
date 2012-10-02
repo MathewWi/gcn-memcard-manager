@@ -402,12 +402,14 @@
   <ItemGroup>
     <ClCompile Include="Src\GUI\MCMdebug.cpp" />
     <ClCompile Include="Src\GUI\MemcardManager.cpp" />
+    <ClCompile Include="Src\GUI\MemcardSelectPanel.cpp" />
     <ClCompile Include="Src\MemoryCards\GCMemcard.cpp" />
     <ClCompile Include="Src\mcmMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\GUI\MCMdebug.h" />
     <ClInclude Include="Src\GUI\MemcardManager.h" />
+    <ClInclude Include="Src\GUI\MemcardSelectPanel.h" />
     <ClInclude Include="Src\MemoryCards\GCMemcard.h" />
     <ClInclude Include="Src\IPLTime.h" />
     <ClInclude Include="Src\MCMmain.h" />

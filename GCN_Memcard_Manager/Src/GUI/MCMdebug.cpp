@@ -161,9 +161,10 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 			 wx_UpdateCounter,
 			 wx_CheckSum1,
 			 wx_CheckSum2;
-	
-	wx_ser.Printf(wxT("%08X%016llX"),
-		BE32(memoryCard[card]->hdr.serial), BE64(memoryCard[card]->hdr.serial+4));
+	u32 serial1, serial2;
+	memoryCard[card]->CARD_GetSerialNo(&serial1, &serial2);
+	wx_ser.Printf(wxT("%08X %08X"),
+		BE32(serial1), BE32(serial2));
 
 	wx_fmtTime.Printf(wxT("%016llX"), 
 		BE64(memoryCard[card]->hdr.formatTime));
