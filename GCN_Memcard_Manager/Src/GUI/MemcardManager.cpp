@@ -685,6 +685,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 				? wxString::FromAscii("")
 				: wxString::From8BitData(DefaultIOPath.c_str()),
 			wxEmptyString, wxEmptyString,
+			_("GameCube Savegame files(*.gci;*.gcs;*.sav)") + wxString(wxT("|*.gci;*.gcs;*.sav|")) +
 			_("Native GCI files(*.gci)") + wxString(wxT("|*.gci|")) +
 			_("MadCatz Gameshark files(*.gcs)") + wxString(wxT("|*.gcs|")) +
 			_("Datel MaxDrive/Pro files(*.sav)") + wxString(wxT("|*.sav")),
@@ -914,7 +915,7 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 		m_MemcardList[card]->SetItem(index, COLUMN_MODTIME, wxString::Format(wxT("%04X"), memoryCard[card]->DEntry_ModTime(fileIndex)));
 		m_MemcardList[card]->SetItem(index, COLUMN_IMAGEADD, wxString::Format(wxT("%04X"), memoryCard[card]->DEntry_ImageOffset(fileIndex)));
 		m_MemcardList[card]->SetItem(index, COLUMN_ICONFMT, wxString::FromAscii(memoryCard[card]->DEntry_IconFmt(fileIndex).c_str()));
-		m_MemcardList[card]->SetItem(index, COLUMN_ANIMSPEED, wxString::Format(wxT("%02X"), memoryCard[card]->DEntry_AnimSpeed(fileIndex)));
+		m_MemcardList[card]->SetItem(index, COLUMN_ANIMSPEED, wxString::FromAscii(memoryCard[card]->DEntry_AnimSpeed(fileIndex).c_str()));
 		m_MemcardList[card]->SetItem(index, COLUMN_PERMISSIONS, wxString::FromAscii(memoryCard[card]->DEntry_Permissions(fileIndex).c_str()));
 		m_MemcardList[card]->SetItem(index, COLUMN_COPYCOUNTER, wxString::Format(wxT("%0X"), memoryCard[card]->DEntry_CopyCounter(fileIndex)));
 		m_MemcardList[card]->SetItem(index, COLUMN_COMMENTSADDRESS, wxString::Format(wxT("%04X"), memoryCard[card]->DEntry_CommentsAddress(fileIndex)));

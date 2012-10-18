@@ -59,6 +59,8 @@ class CMemcardManagerDebug : public wxFrame
 			*sDebug2;
 		
 		wxStaticText	*t_HDR_ser[2],
+						*t_HDR_FlashID[2],
+						*t_HDR_FlashIDscram[2],
 						*t_HDR_fmtTime[2],
 						*t_HDR_SRAMBIAS[2],
 						*t_HDR_SRAMLANG[2],

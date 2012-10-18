@@ -77,26 +77,30 @@ void CMemcardManagerDebug::Init_HDR()
 	
 	wxGridBagSizer * sOtPaths[2];
 	
-	wxStaticText *st[2][11];
+	wxStaticText *st[2][13];
 	
 	for(int i = SLOT_A; i <=SLOT_B;i++)
 	{
 		sOtPaths[i] = new wxGridBagSizer(0, 0);
 		sOtPaths[i]->AddGrowableCol(1);
 		st[i][0]= new wxStaticText(m_Tab_HDR, 0, wxT("Ser\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][1]= new wxStaticText(m_Tab_HDR, 0, wxT("fmtTime\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][2]= new wxStaticText(m_Tab_HDR, 0, wxT("SRAMBIAS\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][3]= new wxStaticText(m_Tab_HDR, 0, wxT("SRAMLANG\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][4]= new wxStaticText(m_Tab_HDR, 0, wxT("Unk2\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][5]= new wxStaticText(m_Tab_HDR, 0, wxT("deviceID\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][6]= new wxStaticText(m_Tab_HDR, 0, wxT("Size\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][7]= new wxStaticText(m_Tab_HDR, 0, wxT("Encoding\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][8]= new wxStaticText(m_Tab_HDR, 0, wxT("UpdateCounter\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][9]= new wxStaticText(m_Tab_HDR, 0, wxT("CheckSum1\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-		st[i][10]= new wxStaticText(m_Tab_HDR, 0, wxT("CheckSum2\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][1]= new wxStaticText(m_Tab_HDR, 0, wxT("FlashID\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][2]= new wxStaticText(m_Tab_HDR, 0, wxT("FlashIDscram\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][3]= new wxStaticText(m_Tab_HDR, 0, wxT("fmtTime\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][4]= new wxStaticText(m_Tab_HDR, 0, wxT("SRAMBIAS\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][5]= new wxStaticText(m_Tab_HDR, 0, wxT("SRAMLANG\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][6]= new wxStaticText(m_Tab_HDR, 0, wxT("Unk2\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][7]= new wxStaticText(m_Tab_HDR, 0, wxT("deviceID\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][8]= new wxStaticText(m_Tab_HDR, 0, wxT("Size\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][9]= new wxStaticText(m_Tab_HDR, 0, wxT("Encoding\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][10]= new wxStaticText(m_Tab_HDR, 0, wxT("UpdateCounter\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][11]= new wxStaticText(m_Tab_HDR, 0, wxT("CheckSum1\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		st[i][12]= new wxStaticText(m_Tab_HDR, 0, wxT("CheckSum2\t\t"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
 
 		t_HDR_ser[i] = new wxStaticText(m_Tab_HDR, 0, wxT("XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX"),
 			wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		t_HDR_FlashID[i] = new wxStaticText(m_Tab_HDR, 0, wxT("XXXXXXXX, XXXXXXXX, XXXXXXXX"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+		t_HDR_FlashIDscram[i] = new wxStaticText(m_Tab_HDR, 0, wxT("XXXXXXXX, XXXXXXXX, XXXXXXXX"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
 		t_HDR_fmtTime[i] = new wxStaticText(m_Tab_HDR, 0, wxT("XXXXXXXX, XXXXXXXX"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
 		t_HDR_SRAMBIAS[i] = new wxStaticText(m_Tab_HDR, 0, wxT("XX, XX, XX, XX"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
 		t_HDR_SRAMLANG[i] = new wxStaticText(m_Tab_HDR, 0, wxT("XX, XX, XX, XX"), wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
@@ -112,34 +116,40 @@ void CMemcardManagerDebug::Init_HDR()
 		sOtPaths[i]->Add(t_HDR_ser[i], wxGBPosition(0, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 
 		sOtPaths[i]->Add(st[i][1], wxGBPosition(1, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_fmtTime[i], wxGBPosition(1, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
-	
+		sOtPaths[i]->Add(t_HDR_FlashID[i], wxGBPosition(1, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+
 		sOtPaths[i]->Add(st[i][2], wxGBPosition(2, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_SRAMBIAS[i], wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_FlashIDscram[i], wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 
 		sOtPaths[i]->Add(st[i][3], wxGBPosition(3, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_SRAMLANG[i], wxGBPosition(3, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_fmtTime[i], wxGBPosition(3, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 	
 		sOtPaths[i]->Add(st[i][4], wxGBPosition(4, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_Unk2[i], wxGBPosition(4, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
-	
+		sOtPaths[i]->Add(t_HDR_SRAMBIAS[i], wxGBPosition(4, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+
 		sOtPaths[i]->Add(st[i][5], wxGBPosition(5, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_devID[i], wxGBPosition(5, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_SRAMLANG[i], wxGBPosition(5, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 	
 		sOtPaths[i]->Add(st[i][6], wxGBPosition(6, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_Size[i], wxGBPosition(6, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
-
+		sOtPaths[i]->Add(t_HDR_Unk2[i], wxGBPosition(6, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+	
 		sOtPaths[i]->Add(st[i][7], wxGBPosition(7, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_Encoding[i], wxGBPosition(7, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_devID[i], wxGBPosition(7, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 	
 		sOtPaths[i]->Add(st[i][8], wxGBPosition(8, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_UpdateCounter[i], wxGBPosition(8, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_Size[i], wxGBPosition(8, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 
 		sOtPaths[i]->Add(st[i][9], wxGBPosition(9, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_CheckSum1[i], wxGBPosition(9, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_Encoding[i], wxGBPosition(9, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 	
 		sOtPaths[i]->Add(st[i][10], wxGBPosition(10, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
-		sOtPaths[i]->Add(t_HDR_CheckSum2[i], wxGBPosition(10, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_UpdateCounter[i], wxGBPosition(10, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+
+		sOtPaths[i]->Add(st[i][11], wxGBPosition(11, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_CheckSum1[i], wxGBPosition(11, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
+	
+		sOtPaths[i]->Add(st[i][12], wxGBPosition(12, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL|wxALL, 5);
+		sOtPaths[i]->Add(t_HDR_CheckSum2[i], wxGBPosition(12, 1), wxGBSpan(1, 1), wxEXPAND|wxALL, 5);
 
 		sHDR[i]->Add(sOtPaths[i], 0, wxEXPAND|wxALL, 5);
 		wMain->Add(sHDR[i], 0, wxEXPAND|wxALL, 1);
@@ -151,6 +161,8 @@ void CMemcardManagerDebug::Init_HDR()
 void CMemcardManagerDebug::updateHDRtab(int card)
 {	
 	wxString wx_ser,
+			 wx_FlashID,
+			 wx_FlashIDscram,
 			 wx_fmtTime,
 			 wx_SRAMBIAS,
 			 wx_SRAMLANG,
@@ -166,9 +178,17 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 	wx_ser.Printf(wxT("%08X %08X"),
 		BE32(serial1), BE32(serial2));
 
+	u32 flashid1, flashid2, flashid3;
+	memoryCard[card]->CARD_GetFlashID((u8*)&flashid1, (u8*)&flashid2, (u8*)&flashid3);
+	wx_FlashID.Printf(wxT("%08X%08X%08X"), 
+		BE32(flashid1), BE32(flashid2), BE32(flashid3));
+
+	wx_FlashIDscram.Printf(wxT("%08X%016llX"), 
+		BE32(memoryCard[card]->hdr.serial), BE64(memoryCard[card]->hdr.serial+4));
+
 	wx_fmtTime.Printf(wxT("%016llX"), 
 		BE64(memoryCard[card]->hdr.formatTime));
-	
+
 	wx_SRAMBIAS.Printf(wxT("%08X"),
 		BE32(memoryCard[card]->hdr.SramBias));
 	
@@ -198,6 +218,8 @@ void CMemcardManagerDebug::updateHDRtab(int card)
 
 
 	t_HDR_ser[card]->SetLabel(wx_ser);
+	t_HDR_FlashID[card]->SetLabel(wx_FlashID);
+	t_HDR_FlashIDscram[card]->SetLabel(wx_FlashIDscram);
 	t_HDR_fmtTime[card]->SetLabel(wx_fmtTime);
 	t_HDR_SRAMBIAS[card]->SetLabel(wx_SRAMBIAS);
 	t_HDR_SRAMLANG[card]->SetLabel(wx_SRAMLANG);
