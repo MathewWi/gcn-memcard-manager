@@ -319,7 +319,7 @@ bool GCMemcard::Save()
 	mcdFile.WriteBytes(&dir_backup, BLOCK_SIZE);
 	mcdFile.WriteBytes(&bat, BLOCK_SIZE);
 	mcdFile.WriteBytes(&bat_backup, BLOCK_SIZE);
-	for (u16 i = 0; i < maxBlock - MC_FST_BLOCKS; ++i)
+	for (unsigned int i = 0; i < maxBlock - MC_FST_BLOCKS; ++i)
 	{
 		mcdFile.WriteBytes(mc_data_blocks[i].block, BLOCK_SIZE);
 	}
@@ -782,7 +782,7 @@ u16 GCMemcard::BlockAlloc::NextFreeBlock(u16 StartingBlock) const
 		for (u16 i = StartingBlock; i < BAT_SIZE; ++i)
 			if (Map[i-MC_FST_BLOCKS] == 0)
 				return i;
-		for (u16 i = 0; i < StartingBlock; ++i)
+		for (u16 i = MC_FST_BLOCKS; i < StartingBlock; ++i)
 			if (Map[i-MC_FST_BLOCKS] == 0)
 				return i;
 	}
@@ -804,7 +804,7 @@ bool GCMemcard::BlockAlloc::ClearBlocks(u16 FirstBlock, u16 BlockCount)
 		{
 			return false;
 		}
-		for (int i = 0; i < length; ++i)
+		for (unsigned int i = 0; i < length; ++i)
 			Map[blocks.at(i)-MC_FST_BLOCKS] = 0;
 		FreeBlocks = BE16(BE16(FreeBlocks) + BlockCount);
 
@@ -864,12 +864,10 @@ u32 GCMemcard::ImportFile(DEntry& direntry, std::vector<GCMBlock> &saveBlocks)
 	Directory UpdatedDir = *CurrentDir;
 	
 	// find first free dir entry
-	int index = -1;
 	for (int i=0; i < DIRLEN; i++)
 	{
 		if (BE32(UpdatedDir.Dir[i].Gamecode) == 0xFFFFFFFF)
 		{
-			index = i;
 			UpdatedDir.Dir[i] = direntry;
 			*(u16*)&UpdatedDir.Dir[i].FirstBlock = BE16(firstBlock);
 			UpdatedDir.Dir[i].CopyCounter = UpdatedDir.Dir[i].CopyCounter+1;
