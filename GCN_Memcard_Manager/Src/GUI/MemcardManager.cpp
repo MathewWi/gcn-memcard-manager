@@ -636,6 +636,7 @@ bool CMemcardManager::CopyDeleteSwitch(u32 error, int slot)
 		PanicAlert(E_UNK);
 		break;
 	}
+	SetFocus();
 	return true;
 }
 
