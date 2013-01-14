@@ -957,6 +957,9 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 		memoryCard[card]->GetFreeBlocks(), DIRLEN - nFiles);
 	t_Status[card]->SetLabel(wxLabel);
 
+	// Done so text doesn't overlap the UI.
+	this->Fit();
+
 
 #ifdef MCM_DEBUG_FRAME
 	if(MemcardManagerDebug == NULL)
