@@ -882,14 +882,11 @@ bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
 		std::string title = memoryCard[card]->GetSaveComment1(fileIndex);
 		std::string comment = memoryCard[card]->GetSaveComment2(fileIndex);
 
-		bool ascii = memoryCard[card]->IsAsciiEncoding();
-#ifdef _WIN32
-		wxCSConv SJISConv(wxFontMapper::GetEncodingName(wxFONTENCODING_SHIFT_JIS));
-#else
-		wxCSConv SJISConv(wxFontMapper::GetEncodingName(wxFONTENCODING_EUC_JP));
-#endif
-		wxTitle  =  wxString(title.c_str(), ascii ? *wxConvCurrent : SJISConv);
-		wxComment = wxString(comment.c_str(), ascii ? *wxConvCurrent : SJISConv);
+auto const string_decoder = memoryCard[card]->IsAsciiEncoding() ?
+			CP1252ToUTF8 : SHIFTJISToUTF8;
+
+		wxTitle = StrToWxStr(string_decoder(title));
+		wxComment = StrToWxStr(string_decoder(comment));
 
 		m_MemcardList[card]->SetItem(index, COLUMN_TITLE, wxTitle);
 		m_MemcardList[card]->SetItem(index, COLUMN_COMMENT, wxComment);
