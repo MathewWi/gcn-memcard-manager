@@ -238,7 +238,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis, u16 _s
 	}
 
 	mcdFile.Close();
-
+	
 	SetCurrentDirBatInternal();
 }
 
@@ -1469,7 +1469,8 @@ bool GCMemcard::Format(bool sjis, u16 SizeMb)
 		GCMBlock b;
 		mc_data_blocks.push_back(b);
 	}
-
+	
+	initDirBatPointers();
 	return Save();
 }
 
