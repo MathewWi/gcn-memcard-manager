@@ -4,9 +4,10 @@
 
 #include "GCMemcard.h"
 #include "ColorUtil.h"
-#include "FileUtil.h"
 
-void ByteSwap(u8 *valueA, u8 *valueB)
+#include <cinttypes>
+
+static void ByteSwap(u8 *valueA, u8 *valueB)
 {
 	u8 tmp = *valueA;
 	*valueA = *valueB;
@@ -196,7 +197,7 @@ GCMemcard::GCMemcard(const char *filename, bool forceCreation, bool sjis, u16 _s
 		}
 		else
 		{
-			PanicAlertT("Failed to read block %d of the save data\nMemcard may be truncated\nFilePosition:%llx", i, mcdFile.Tell());
+			PanicAlertT("Failed to read block %d of the save data\nMemcard may be truncated\nFilePosition:%" PRIx64, i, mcdFile.Tell());
 			m_valid = false;
 			break;
 		}
