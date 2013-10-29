@@ -127,7 +127,7 @@ class CMemcardManager : public wxFrame
 			COLUMN_COMMENTSADDRESS,
 			NUMBER_OF_COLUMN
 		};
-		
+
 		GCMemcard *memoryCard[2];
 
 		void CreateGUIControls();
@@ -176,9 +176,9 @@ class CMemcardManager : public wxFrame
 			bool prevPage,
 				 nextPage;
 		private:
-			void OnRightClick(wxMouseEvent& event);	
+			void OnRightClick(wxMouseEvent& event);
 		};
-		
+
 		CMemcardListCtrl *m_MemcardList[2];
 };
 
