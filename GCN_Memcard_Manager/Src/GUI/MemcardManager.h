@@ -14,9 +14,9 @@
 #include <wx/imaglist.h>
 #include <wx/fontmap.h>
 
-#include "IniFile.h"
-#include "FileUtil.h"
-#include "MemoryCards/GCMemcard.h"
+#include "Core/HW/GCMemcard.h"
+#include "Common/FileUtil.h"
+#include "Common/IniFile.h"
 
 #undef MEMCARD_MANAGER_STYLE
 #define MEMCARD_MANAGER_STYLE (wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
