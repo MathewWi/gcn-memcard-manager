@@ -5,18 +5,18 @@
 #pragma once
 #include "MemcardSelectPanel.h"
 
-#include <wx/wx.h>
-#include <wx/sizer.h>
 #include <wx/filepicker.h>
+#include <wx/fontmap.h>
+#include <wx/imaglist.h>
+#include <wx/listctrl.h>
+#include <wx/sizer.h>
 #include <wx/statbmp.h>
 #include <wx/stattext.h>
-#include <wx/listctrl.h>
-#include <wx/imaglist.h>
-#include <wx/fontmap.h>
+#include <wx/wx.h>
 
-#include "Core/HW/GCMemcard.h"
 #include "Common/FileUtil.h"
 #include "Common/IniFile.h"
+#include "Core/HW/GCMemcard.h"
 
 #undef MEMCARD_MANAGER_STYLE
 #define MEMCARD_MANAGER_STYLE (wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
