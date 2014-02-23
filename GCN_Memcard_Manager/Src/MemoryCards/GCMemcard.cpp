@@ -1001,7 +1001,6 @@ u32 GCMemcard::ImportGciInternal(FILE* gcih, const char *inputFile, const std::s
 {
 	File::IOFile gci(gcih);
 	unsigned int offset;
-	char tmp[0xD];
 	std::string fileType;
 	SplitPath(inputFile, NULL, NULL, &fileType);
 
@@ -1009,7 +1008,8 @@ u32 GCMemcard::ImportGciInternal(FILE* gcih, const char *inputFile, const std::s
 		offset = GCI;
 	else
 	{
-		gci.ReadBytes(tmp, 0xD);
+		char tmp[0xD];
+		gci.ReadBytes(tmp, sizeof(tmp));
 		if (!strcasecmp(fileType.c_str(), ".gcs"))
 		{
 			if (!memcmp(tmp, "GCSAVE", 6)) // Header must be uppercase
