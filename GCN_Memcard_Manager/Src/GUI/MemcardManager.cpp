@@ -185,8 +185,8 @@ CMemcardManager::CMemcardManager(wxWindow* parent, wxWindowID id, const wxString
 	: wxFrame(parent, id, title, position, size, style),
 	parent(parent)
 {
-	memoryCard[SLOT_A]=NULL;
-	memoryCard[SLOT_B]=NULL;
+	memoryCard[SLOT_A]=nullptr;
+	memoryCard[SLOT_B]=nullptr;
 
 	mcmSettings.twoCardsLoaded = false;
 	if (!LoadSettings())
@@ -216,12 +216,12 @@ CMemcardManager::~CMemcardManager()
 	if (memoryCard[SLOT_A])
 	{
 		delete memoryCard[SLOT_A];
-		memoryCard[SLOT_A] = NULL;
+		memoryCard[SLOT_A] = nullptr;
 	}
 	if (memoryCard[SLOT_B])
 	{
 		delete memoryCard[SLOT_B];
-		memoryCard[SLOT_B] = NULL;
+		memoryCard[SLOT_B] = nullptr;
 	}
 	SaveSettings();
 #ifdef MCM_DEBUG_FRAME
@@ -479,7 +479,7 @@ void CMemcardManager::ChangePath(int slot)
 			if (memoryCard[slot])
 			{
 				delete memoryCard[slot];
-				memoryCard[slot] = NULL;
+				memoryCard[slot] = nullptr;
 			}
 			wxMenuBar const * tmpMenu = GetMenuBar();
 			//tmpMenu->FindItem(IDM_NEWMEMCARD_A + slot)->Enable();
@@ -763,14 +763,14 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 	{
 		std::string path1, path2, mpath;
 		mpath = WxStrToStr(m_MemcardPath[slot]->GetPath());
-		SplitPath(mpath, &path1, &path2, NULL);
+		SplitPath(mpath, &path1, &path2, nullptr);
 		path1 += path2;
 		File::CreateDir(path1);
 		if(PanicYesNoT("Warning: This will overwrite any existing saves that are in the folder:\n"
 					"%s\nand have the same name as a file on your memcard\nContinue?", path1.c_str()))
 		for (int i = 0; i < DIRLEN; i++)
 		{
-			CopyDeleteSwitch(memoryCard[slot]->ExportGci(i, NULL, path1), -1);
+			CopyDeleteSwitch(memoryCard[slot]->ExportGci(i, nullptr, path1), -1);
 		}
 		break;
 	}
