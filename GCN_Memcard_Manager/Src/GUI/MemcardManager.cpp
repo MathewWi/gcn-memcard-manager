@@ -263,7 +263,7 @@ bool CMemcardManager::LoadSettings()
 #else
 		mcmSettings.column[NUMBER_OF_COLUMN] = false;
 #endif
-		for(int i = COLUMN_GAMECODE; i < NUMBER_OF_COLUMN; i++)
+		for (int i = COLUMN_GAMECODE; i < NUMBER_OF_COLUMN; i++)
 		{
 			mcmSettings.column[i] = mcmSettings.column[NUMBER_OF_COLUMN];
 		}
@@ -453,7 +453,7 @@ void CMemcardManager::ChangePath(int slot)
 	}
 	if (!m_MemcardPath[SLOT_A]->GetPath().CmpNoCase(m_MemcardPath[SLOT_B]->GetPath()))
 	{
-		if(m_MemcardPath[slot]->GetPath().length())
+		if (m_MemcardPath[slot]->GetPath().length())
 			PanicAlertT("Memcard already opened");
 	}
 	else
@@ -549,7 +549,7 @@ void CMemcardManager::OnPageChange(wxCommandEvent& event)
 void CMemcardManager::OnMenuChange(wxCommandEvent& event)
 {
 	int _id = event.GetId();
-	switch(_id)
+	switch (_id)
 	{
 	case ID_MEMCARDPATH_A:
 	case ID_MEMCARDPATH_B:
@@ -766,8 +766,8 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 		SplitPath(mpath, &path1, &path2, nullptr);
 		path1 += path2;
 		File::CreateDir(path1);
-		if(PanicYesNoT("Warning: This will overwrite any existing saves that are in the folder:\n"
-					"%s\nand have the same name as a file on your memcard\nContinue?", path1.c_str()))
+		if (PanicYesNoT("Warning: This will overwrite any existing saves that are in the folder:\n"
+		                "%s\nand have the same name as a file on your memcard\nContinue?", path1.c_str()))
 		for (int i = 0; i < DIRLEN; i++)
 		{
 			CopyDeleteSwitch(memoryCard[slot]->ExportGci(i, nullptr, path1), -1);
