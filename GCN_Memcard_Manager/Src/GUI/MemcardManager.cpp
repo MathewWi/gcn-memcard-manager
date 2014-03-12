@@ -458,7 +458,7 @@ void CMemcardManager::ChangePath(int slot)
 	}
 	else
 	{
-		if (m_MemcardPath[slot]->GetPath().length() && ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()).c_str(), slot))
+		if (m_MemcardPath[slot]->GetPath().length() && ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()), slot))
 		{
 			if (memoryCard[slot2])
 			{
@@ -525,7 +525,7 @@ void CMemcardManager::OnPageChange(wxCommandEvent& event)
 			m_NextPage[slot]->Disable();
 			m_MemcardList[slot]->nextPage = false;
 		}
-		ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()).c_str(), slot);
+		ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()), slot);
 		break;
 	case ID_PREVPAGE_A:
 		slot = SLOT_A;
@@ -541,7 +541,7 @@ void CMemcardManager::OnPageChange(wxCommandEvent& event)
 			m_PrevPage[slot]->Disable();
 			m_MemcardList[slot]->prevPage = false;
 		}
-		ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()).c_str(), slot);
+		ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()), slot);
 		break;
 	}
 }
@@ -580,8 +580,8 @@ void CMemcardManager::OnMenuChange(wxCommandEvent& event)
 		break;
 	}
 
-	if (memoryCard[SLOT_A]) ReloadMemcard(WxStrToStr(m_MemcardPath[SLOT_A]->GetPath()).c_str(), SLOT_A);
-	if (memoryCard[SLOT_B]) ReloadMemcard(WxStrToStr(m_MemcardPath[SLOT_B]->GetPath()).c_str(), SLOT_B);
+	if (memoryCard[SLOT_A]) ReloadMemcard(WxStrToStr(m_MemcardPath[SLOT_A]->GetPath()), SLOT_A);
+	if (memoryCard[SLOT_B]) ReloadMemcard(WxStrToStr(m_MemcardPath[SLOT_B]->GetPath()), SLOT_B);
 }
 bool CMemcardManager::CopyDeleteSwitch(u32 error, int slot)
 {
@@ -596,7 +596,7 @@ bool CMemcardManager::CopyDeleteSwitch(u32 error, int slot)
 			memoryCard[slot]->FixChecksums();
 			if (!memoryCard[slot]->Save()) PanicAlert(E_SAVEFAILED);
 			page[slot] = FIRSTPAGE;
-			ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()).c_str(), slot);
+			ReloadMemcard(WxStrToStr(m_MemcardPath[slot]->GetPath()), slot);
 		}
 		break;
 	case NOMEMCARD:
@@ -722,7 +722,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 		}
 		if (fileName.length() > 0)
 		{
-			CopyDeleteSwitch(memoryCard[slot]->ImportGci(WxStrToStr(fileName).c_str(), fileName2), slot);
+			CopyDeleteSwitch(memoryCard[slot]->ImportGci(WxStrToStr(fileName), fileName2), slot);
 		}
 	}
 	break;
@@ -750,7 +750,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 
 			if (fileName.length() > 0)
 			{
-				if (!CopyDeleteSwitch(memoryCard[slot]->ExportGci(index, WxStrToStr(fileName).c_str(), ""), -1))
+				if (!CopyDeleteSwitch(memoryCard[slot]->ExportGci(index, WxStrToStr(fileName), ""), -1))
 				{
 					File::Delete(WxStrToStr(fileName));
 				}
@@ -787,7 +787,7 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 	}
 }
 
-bool CMemcardManager::ReloadMemcard(const char *fileName, int card)
+bool CMemcardManager::ReloadMemcard(const std::string& fileName, int card)
 {
 	if (memoryCard[card]) delete memoryCard[card];
 

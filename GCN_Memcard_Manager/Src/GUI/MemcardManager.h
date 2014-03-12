@@ -143,7 +143,7 @@ class CMemcardManager : public wxFrame
 		void OnClose(wxCloseEvent& event);
 		void CopyDeleteClick(wxCommandEvent& event);
 		void CreateNewMemcard(int slot, wxString path, bool resizeOnly=false);
-		bool ReloadMemcard(const char *fileName, int card);
+		bool ReloadMemcard(const std::string& fileName, int card);
 		void TestFunctions(wxCommandEvent& event);
 		void OnMenuChange(wxCommandEvent& event);
 		void OnPageChange(wxCommandEvent& event);
