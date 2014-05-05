@@ -6,12 +6,12 @@
 
 #include <string>
 
-#include "Common/Common.h"
-#include "Common/CommonPaths.h"
-#include "Common/StringUtil.h"
+#include "Common.h"
+#include "CommonPaths.h"
+#include "StringUtil.h"
 
 #include "IPLTime.h"//EXI_DeviceIPL.h"
-#include "Core/HW/Sram.h"
+//#include "Core/HW/Sram.h"
 
 #define BE64(x) (Common::swap64(x))
 #define BE32(x) (Common::swap32(x))

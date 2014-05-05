@@ -6,7 +6,7 @@
 #include <string>
 #include <wx/bitmap.h>
 #include <wx/button.h>
-#include <wx/chartype.h>
+//#include <wx/chartype.h>
 #include <wx/defs.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -22,17 +22,17 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/string.h>
-#include <wx/translation.h>
+//#include <wx/translation.h>
 #include <wx/window.h>
-#include <wx/windowid.h>
+//#include <wx/windowid.h>
 
-#include "Common/Common.h"
-#include "Common/FileUtil.h"
-#include "Common/IniFile.h"
-#include "Common/StringUtil.h"
-#include "Core/HW/GCMemcard.h"
-#include "DolphinWX/MemcardManager.h"
-#include "DolphinWX/WxUtils.h"
+#include "Common.h"
+#include "FileUtil.h"
+#include "IniFile.h"
+#include "StringUtil.h"
+#include "../MemoryCards/GCMemcard.h"
+#include "MemcardManager.h"
+#include "WxUtils.h"
 
 #define ARROWS slot ? _T("") : ARROW[slot], slot ? ARROW[slot] : _T("")
 

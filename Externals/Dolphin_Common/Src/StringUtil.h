@@ -1,33 +1,26 @@
-// Copyright (C) 2003 Dolphin Project.
+// Copyright 2013 Dolphin Emulator Project
+// Licensed under GPLv2
+// Refer to the license.txt file included.
 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, version 2.0.
+#pragma once
 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License 2.0 for more details.
-
-// A copy of the GPL 2.0 should have been included with the program.
-// If not, see http://www.gnu.org/licenses/
-
-// Official SVN repository and contact information can be found at
-// http://code.google.com/p/dolphin-emu/
-
-#ifndef _STRINGUTIL_H_
-#define _STRINGUTIL_H_
-
-#include <stdarg.h>
-
-#include <vector>
-#include <string>
-#include <sstream>
+#include <cstdarg>
+#include <cstddef>
 #include <iomanip>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include "Common.h"
 
-std::string StringFromFormat(const char* format, ...);
+std::string StringFromFormat(const char* format, ...)
+#if !defined _WIN32
+// On compilers that support function attributes, this gives StringFromFormat
+// the same errors and warnings that printf would give.
+ __attribute__ ((__format__(printf, 1, 2)))
+#endif
+;
+
 // Cheap!
 bool CharArrayFromFormatV(char* out, int outsize, const char* format, va_list args);
 
@@ -71,7 +64,7 @@ template <typename N>
 static bool TryParse(const std::string &str, N *const output)
 {
 	std::istringstream iss(str);
-	
+
 	N tmp = 0;
 	if (iss >> tmp)
 	{
@@ -83,7 +76,7 @@ static bool TryParse(const std::string &str, N *const output)
 }
 
 // TODO: kill this
-bool AsciiToHex(const char* _szValue, u32& result);
+bool AsciiToHex(const std::string& _szValue, u32& result);
 
 std::string TabsToSpaces(int tab_size, const std::string &in);
 
@@ -97,4 +90,26 @@ std::string ReplaceAll(std::string result, const std::string& src, const std::st
 std::string UriDecode(const std::string & sSrc);
 std::string UriEncode(const std::string & sSrc);
 
-#endif // _STRINGUTIL_H_
+std::string CP1252ToUTF8(const std::string& str);
+std::string SHIFTJISToUTF8(const std::string& str);
+std::string UTF16ToUTF8(const std::wstring& str);
+
+#ifdef _WIN32
+
+std::wstring UTF8ToUTF16(const std::string& str);
+
+#ifdef _UNICODE
+inline std::string TStrToUTF8(const std::wstring& str)
+{ return UTF16ToUTF8(str); }
+
+inline std::wstring UTF8ToTStr(const std::string& str)
+{ return UTF8ToUTF16(str); }
+#else
+inline std::string TStrToUTF8(const std::string& str)
+{ return str; }
+
+inline std::string UTF8ToTStr(const std::string& str)
+{ return str; }
+#endif
+
+#endif

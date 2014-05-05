@@ -1,6 +1,6 @@
 #include "MemcardManager.h"
 #include "MCMdebug.h"
-
+#include "../MemoryCards/GCMemcard.h"
 BEGIN_EVENT_TABLE(CMemcardManagerDebug, wxWindow)
 	EVT_CLOSE(CMemcardManagerDebug::OnClose)
 END_EVENT_TABLE()

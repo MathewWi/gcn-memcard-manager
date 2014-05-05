@@ -6,7 +6,7 @@
 #include "MemcardSelectPanel.h"
 
 #include <string>
-#include <wx/chartype.h>
+//#include <wx/chartype.h>
 #include <wx/defs.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
@@ -14,11 +14,11 @@
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/toplevel.h>
-#include <wx/translation.h>
-#include <wx/windowid.h>
+//#include <wx/translation.h>
+//#include <wx/windowid.h>
 
-#include "Common/Common.h"
-#include "Common/IniFile.h"
+#include "Common.h"
+#include "IniFile.h"
 
 class GCMemcard;
 class wxButton;

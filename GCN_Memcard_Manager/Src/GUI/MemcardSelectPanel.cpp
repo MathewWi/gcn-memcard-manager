@@ -16,6 +16,8 @@
 // http://code.google.com/p/dolphin-emu/
 #include "MemcardManager.h"
 #include "MemcardSelectPanel.h"
+#include "../MemoryCards/GCMemcard.h"
+#include "FileUtil.h"
 #include "wx/spinctrl.h"
 BEGIN_EVENT_TABLE(CMemcardSelectPanel, wxDialog)
 	EVT_FILEPICKER_CHANGED(wxID_ANY,CMemcardSelectPanel::OnPathChange)

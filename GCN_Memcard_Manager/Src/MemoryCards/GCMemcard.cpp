@@ -2,11 +2,13 @@
 // Licensed under GPLv2
 // Refer to the license.txt file included.
 
-#include <cinttypes>
+#include "CommonTypes.h"
 #include <string>
 
-#include "Common/ColorUtil.h"
-#include "Core/HW/GCMemcard.h"
+#include "ColorUtil.h"
+#include "FileUtil.h"
+#include "Sram.h"
+#include "GCMemcard.h"
 
 static void ByteSwap(u8 *valueA, u8 *valueB)
 {
@@ -198,7 +200,8 @@ GCMemcard::GCMemcard(const std::string& filename, bool forceCreation, bool sjis,
 		}
 		else
 		{
-			PanicAlertT("Failed to read block %d of the save data\nMemcard may be truncated\nFilePosition:%" PRIx64, i, mcdFile.Tell());
+			PanicAlertT("Failed to read block %d of the save data\nMemcard may be truncated\nFilePosition:%ull", i, mcdFile.Tell());
+			//PanicAlertT("Failed to read block %d of the save data\nMemcard may be truncated\nFilePosition:%" PRIx64, i, mcdFile.Tell());
 			m_valid = false;
 			break;
 		}
@@ -274,7 +277,7 @@ bool GCMemcard::Save()
 	mcdFile.WriteBytes(&dir_backup, BLOCK_SIZE);
 	mcdFile.WriteBytes(&bat, BLOCK_SIZE);
 	mcdFile.WriteBytes(&bat_backup, BLOCK_SIZE);
-	for (unsigned int i = 0; i < maxBlock - MC_FST_BLOCKS; ++i)
+	for (unsigned int i = 0; i < (maxBlock - (u16)MC_FST_BLOCKS); ++i)
 	{
 		mcdFile.WriteBytes(mc_data_blocks[i].block, BLOCK_SIZE);
 	}
@@ -1439,7 +1442,7 @@ bool GCMemcard::Format(bool sjis, u16 SizeMb)
 		mc_data_blocks.push_back(b);
 	}
 
-	initDirBatPointers();
+	SetCurrentDirBatInternal();
 	return Save();
 }
 
