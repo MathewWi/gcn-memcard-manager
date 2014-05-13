@@ -90,6 +90,8 @@ BEGIN_EVENT_TABLE(CMemcardManager, wxFrame)
 	EVT_CLOSE(CMemcardManager::OnClose)
 	EVT_BUTTON(ID_COPYFROM_A,CMemcardManager::CopyDeleteClick)
 	EVT_BUTTON(ID_COPYFROM_B,CMemcardManager::CopyDeleteClick)
+	EVT_BUTTON(ID_REPLACE_A,CMemcardManager::CopyDeleteClick)
+	EVT_BUTTON(ID_COPYFROM_B,CMemcardManager::CopyDeleteClick)
 	EVT_BUTTON(ID_DELETE_A,CMemcardManager::CopyDeleteClick)
 	EVT_BUTTON(ID_DELETE_B,CMemcardManager::CopyDeleteClick)
 	EVT_BUTTON(ID_SAVEIMPORT_B,CMemcardManager::CopyDeleteClick)
@@ -346,6 +348,8 @@ void CMemcardManager::CreateGUIControls()
 	{
 		m_CopyFrom[slot]    = new wxButton(this, ID_COPYFROM_A + slot,
 			wxString::Format(_("%1$sCopy%1$s"), ARROW[slot ? 0 : 1]));
+		m_SaveReplace[slot]    = new wxButton(this, ID_REPLACE_A + slot,
+			wxString::Format(_("%1$sreplace%1$s"), ARROW[slot ? 0 : 1]));
 		m_SaveImport[slot]  = new wxButton(this, ID_SAVEIMPORT_A + slot,
 			wxString::Format(_("%sImport GCI%s"), ARROWS));
 		m_SaveExport[slot]  = new wxButton(this, ID_SAVEEXPORT_A + slot,
@@ -387,11 +391,13 @@ void CMemcardManager::CreateGUIControls()
 	sButtons->AddStretchSpacer(1);
 	sButtons->Add(m_SaveImport[SLOT_A], 0, wxEXPAND, 5);
 	sButtons->Add(m_SaveExport[SLOT_A], 0, wxEXPAND, 5);
+	sButtons->Add(m_SaveReplace[SLOT_A], 0, wxEXPAND, 5);
 	sButtons->AddStretchSpacer(1);
 	sButtons->Add(m_ConvertToGci, 0, wxEXPAND, 5);
 	sButtons->AddStretchSpacer(1);
 	sButtons->Add(m_SaveImport[SLOT_B], 0, wxEXPAND, 5);
 	sButtons->Add(m_SaveExport[SLOT_B], 0, wxEXPAND, 5);
+	sButtons->Add(m_SaveReplace[SLOT_B], 0, wxEXPAND, 5);
 	sButtons->AddStretchSpacer(1);
 	sButtons->Add(m_Delete[SLOT_A], 0, wxEXPAND, 5);
 	sButtons->Add(m_Delete[SLOT_B], 0, wxEXPAND, 5);
@@ -679,6 +685,24 @@ void CMemcardManager::CopyDeleteClick(wxCommandEvent& event)
 			CopyDeleteSwitch(memoryCard[slot]->CopyFrom(*memoryCard[slot2], index), slot);
 		}
 		break;
+	case ID_REPLACE_A:
+		slot = SLOT_A;
+	case ID_REPLACE_B:
+		{
+		wxString fileName = wxFileSelector(
+			_("Select a save file to import"),
+			(strcmp(DefaultIOPath.c_str(), "/Users/GC") == 0)
+				? StrToWxStr("")
+				: StrToWxStr(DefaultIOPath),
+			wxEmptyString, wxEmptyString,
+			_("GameCube Savegame files(*.gci;*.gcs;*.sav)") + wxString(wxT("|*.gci;*.gcs;*.sav|")) +
+			_("Native GCI files(*.gci)") + wxString(wxT("|*.gci|")) +
+			_("MadCatz Gameshark files(*.gcs)") + wxString(wxT("|*.gcs|")) +
+			_("Datel MaxDrive/Pro files(*.sav)") + wxString(wxT("|*.sav")),
+			wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
+		
+		memoryCard[slot]->ReplaceSave(WxStrToStr(fileName));
+		}
 	case ID_FIXCHECKSUM_A:
 		slot = SLOT_A;
 	case ID_FIXCHECKSUM_B:

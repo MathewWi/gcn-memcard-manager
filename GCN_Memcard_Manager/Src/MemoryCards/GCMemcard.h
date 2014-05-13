@@ -256,7 +256,7 @@ public:
 
 	// adds the file to the directory and copies its contents
 	u32 ImportFile(DEntry& direntry, std::vector<GCMBlock> &saveBlocks);
-
+	u32 ReplaceSave(std::string filename);
 	// delete a file from the directory
 	u32 RemoveFile(u8 index);
 

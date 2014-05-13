@@ -809,6 +809,90 @@ u32 GCMemcard::GetSaveData(u8 index,  std::vector<GCMBlock> & Blocks) const
 	return SUCCESS;
 }
 // End DEntry functions
+u32 GCMemcard::ReplaceSave(std::string filename)
+{
+	File::IOFile gci(filename, "rb");
+	unsigned int offset;
+	std::string fileType;
+	SplitPath(filename, nullptr, nullptr, &fileType);
+
+	if (!strcasecmp(fileType.c_str(), ".gci"))
+		offset = GCI;
+	else
+	{
+		char tmp[0xD];
+		gci.ReadBytes(tmp, sizeof(tmp));
+		if (!strcasecmp(fileType.c_str(), ".gcs"))
+		{
+			if (!memcmp(tmp, "GCSAVE", 6)) // Header must be uppercase
+				offset = GCS;
+			else
+				return GCSFAIL;
+		}
+		else if (!strcasecmp(fileType.c_str(), ".sav"))
+		{
+			if (!memcmp(tmp, "DATELGC_SAVE", 0xC)) // Header must be uppercase
+				offset = SAV;
+			else
+				return SAVFAIL;
+		}
+		else
+			return OPENFAIL;
+	}
+	gci.Seek(offset, SEEK_SET);
+
+	DEntry tempDEntry;
+	gci.ReadBytes(&tempDEntry, DENTRY_SIZE);
+	const u32 fStart = (u32)gci.Tell();
+	gci.Seek(0, SEEK_END);
+	const u32 length = (u32)gci.Tell() - fStart;
+	gci.Seek(offset + DENTRY_SIZE, SEEK_SET);
+
+	Gcs_SavConvert(tempDEntry, offset, length);
+
+	if (length != ((u32)BE16(tempDEntry.BlockCount) * BLOCK_SIZE))
+		return LENGTHFAIL;
+	if (gci.Tell() != offset + DENTRY_SIZE) // Verify correct file position
+		return OPENFAIL;
+
+	u32 size = BE16((tempDEntry.BlockCount));
+	std::vector<GCMBlock> saveData;
+	saveData.reserve(size);
+
+	for (u32 i = 0; i < size; ++i)
+	{
+		GCMBlock b;
+		gci.ReadBytes(b.block, BLOCK_SIZE);
+		saveData.push_back(b);
+	}
+	u8 i = TitlePresent(tempDEntry);
+	if (i == DIRLEN)
+	{
+		PanicAlert("Save not found");
+		return 0;
+	}
+	u16 block = *(u16*)tempDEntry.FirstBlock = *(u16*)CurrentDir->Dir[i].FirstBlock;
+	CurrentDir->Dir[i] = tempDEntry;
+	block = BE16(block);
+	PanicAlert("%d", block);
+	int j = 0;
+
+	while (block != 0xFFFF && j < size)
+	{
+		mc_data_blocks.at(block - MC_FST_BLOCKS) = saveData.at(j);
+		block = CurrentBat->GetNextBlock(block);
+		++j;
+	}
+	if (block == 0xFFFF && j == size)
+	{
+		Save();
+		return SUCCESS;
+	}
+	PanicAlert("Failed");
+	return 0;
+
+
+}
 
 u32 GCMemcard::ImportFile(DEntry& direntry, std::vector<GCMBlock> &saveBlocks)
 {

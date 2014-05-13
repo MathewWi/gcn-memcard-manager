@@ -69,6 +69,7 @@ class CMemcardManager : public wxFrame
 #endif
 
 		wxButton* m_CopyFrom[2];
+		wxButton* m_SaveReplace[2];
 		wxButton* m_SaveImport[2];
 		wxButton* m_SaveExport[2];
 		wxButton* m_Delete[2];
@@ -91,6 +92,8 @@ class CMemcardManager : public wxFrame
 
 			ID_COPYFROM_A = 1000, // Do not rearrange these items,
 			ID_COPYFROM_B,        // ID_..._B must be 1 more than ID_..._A
+			ID_REPLACE_A,
+			ID_REPLACE_B,
 			ID_FIXCHECKSUM_A,
 			ID_FIXCHECKSUM_B,
 			ID_DELETE_A,
